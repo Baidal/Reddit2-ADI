@@ -14,7 +14,7 @@ function hashPass(user) {
 }
 
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define("user", {
+  const User = sequelize.define("User", {
     nick: {
       type: Sequelize.STRING(40),
       unique: true,

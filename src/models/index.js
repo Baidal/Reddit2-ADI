@@ -13,5 +13,6 @@ const db = {
 }
 
 db.User = require('./User')(sequelize, Sequelize)
+db.Comunity = require('./Comunity')(sequelize, Sequelize)
 
 module.exports = db
