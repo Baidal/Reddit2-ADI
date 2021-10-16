@@ -11,6 +11,9 @@ app.use(logger('dev'))
 app.use(cors())
 app.use(express.json())
 
+//Routes definitions
+require('./routes')(app)
+
 const port = process.env.PORT || 3000
 
 const db = require('./models')

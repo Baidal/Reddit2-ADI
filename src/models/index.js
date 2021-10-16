@@ -17,6 +17,7 @@ const db = {
   sequelize,
 };
 
+//ENTITIES
 db.User = require("./User")(sequelize, Sequelize);
 db.Community = require("./Community")(sequelize, Sequelize);
 db.Post = require("./Post")(sequelize, Sequelize);
@@ -94,5 +95,7 @@ db.Post.belongsTo(db.Community)
  */
 db.Post.hasMany(db.Comment, { foreignKey: { allowNull: false } })
 db.Comment.belongsTo(db.Post)
+
+
 module.exports = db;
 
