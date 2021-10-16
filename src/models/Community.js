@@ -1,13 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
-  const Comunity = sequelize.define("Comunity", {
+  const Community = sequelize.define("Community", {
     name: {
       type: Sequelize.STRING(40),
       allowNull: false
     },
     description: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING(2000)
     }
   })
 
-  return Comunity
+  return Community
 }
