@@ -1,3 +1,5 @@
+const jwt = require("jwt-simple");
+const jwtConf = require("../config/jwtConf");
 const comparePasswords = require("../utils/checkPassword").comparePasswords;
 
 /**
@@ -5,47 +7,28 @@ const comparePasswords = require("../utils/checkPassword").comparePasswords;
  * body del request es correcto.
  */
 module.exports = authMiddleware = async (req, res, next) => {
-  const nickEmail = req.body.nickEmail;
-  const pass = req.body.password;
-
-  const errors = { errors: [] };
-
-  if (!nickEmail) {
-    errors.errors.push({ error: "Debes introducir el nick o el email" });
+  if (!req.headers.authorization) {
+    res.status(401).send({
+      errors: [
+        {
+          error: "Token no introducido en la petición",
+        },
+      ],
+    });
   }
 
-  if (!pass) {
-    errors.errors.push({ error: "Debes introducir el nick o el email" });
-  }
-
-  const user = await User.findOne({
-    where: {
-      [Op.or]: [{ email: nickEmail }, { nick: nickEmail }],
-    },
-  });
+  const token = req.headers.authorization.split(" ")[1];
+  const user = jwt.decode(token, jwtConf.SECRET);
 
   if (user) {
-    //El usuario es correcto
-    if (await comparePasswords(pass, user.password)) {
-      res.locals.user = user;
-      next();
-    } else {
-      //el usuario no es correcto
-      res.status(401).send({
-        errors: [
-          {
-            error: "El usuario introducido no es correcto",
-          },
-        ],
-      });
-      return;
-    }
+    res.locals.user = user;
+    next()
   }
 
   res.status(401).send({
     errors: [
       {
-        error: "Los datos introducidos no corresponden a ningún usuario",
+        error: "El token introducido no e correcto o no se ha podido decodificar",
       },
     ],
   });
