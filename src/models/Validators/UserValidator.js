@@ -9,34 +9,36 @@ module.exports = {
         .pattern(new RegExp("^[a-zA-Z0-9]{8,32}$"))
         .required(),
       url_image: Joi.string(),
-      description: Joi.string()
+      description: Joi.string(),
     });
 
-    const errors = {errors: []}
-    const {error} = user.validate(req.body)
+    const errors = { errors: [] };
+    const { error } = user.validate(req.body);
 
-    if(error) {
+    if (error) {
       switch (error.details[0].context.key) {
-        case 'email':
-          errors.errors.push({error: "Debes introducir un email válido."})
+        case "email":
+          errors.errors.push({ error: "Debes introducir un email válido." });
           break;
-        case 'nick':
-          errors.errors.push({error: "Debes introducir un nick."})
+        case "nick":
+          errors.errors.push({ error: "Debes introducir un nick." });
           break;
-        case 'password':
-          errors.errors.push({error: "Debes introducir una contraseña correcta."})
+        case "password":
+          errors.errors.push({
+            error: "Debes introducir una contraseña correcta.",
+          });
           break;
-        case 'description':
-          errors.errors.push({error: "Error en la descripción."})
+        case "description":
+          errors.errors.push({ error: "Error en la descripción." });
           break;
       }
     }
 
-    if(errors.errors.length !== 0){
-      res.status(400).send(errors)
-      return
+    if (errors.errors.length !== 0) {
+      res.status(400).send(errors);
+      return;
     }
 
-    next()
-  },
+    next();
+  }
 };
