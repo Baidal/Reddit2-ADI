@@ -5,4 +5,5 @@
  */
 module.exports = (app) => {
     require('./Auth')(app)
+    require('./Community')(app)
 }

@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000
 
 const db = require('./models')
 
-db.sequelize.sync({force: true}).then(() => {
+db.sequelize.sync({force: false}).then(() => {
     app.listen(port)
     console.log(`Servidor escuchando en el puerto ${port}`);
 })

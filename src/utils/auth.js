@@ -18,18 +18,22 @@ module.exports = authMiddleware = async (req, res, next) => {
   }
 
   const token = req.headers.authorization.split(" ")[1];
-  const user = jwt.decode(token, jwtConf.SECRET);
 
-  if (user) {
+  try {
+
+    const user = jwt.decode(token, jwtConf.SECRET);
     res.locals.user = user;
-    next()
-  }
+    return next();
 
-  res.status(401).send({
-    errors: [
-      {
-        error: "El token introducido no e correcto o no se ha podido decodificar",
-      },
-    ],
-  });
+  } catch (e) {
+    //Se lanza una excepcion al decodificar el token
+    res.status(401).send({
+      errors: [
+        {
+          error:
+            "El token introducido no e correcto o no se ha podido decodificar",
+        },
+      ],
+    });
+  }
 };
