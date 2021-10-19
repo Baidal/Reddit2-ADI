@@ -122,7 +122,7 @@ module.exports = {
         return;
       }
 
-      if(isNaN(value) || (value !== -1 && value !== 1)) {
+      if (isNaN(value) || (value !== -1 && value !== 1)) {
         res.status(400).send({
           errores: [{ error: "El valor del post no es correcto" }],
         });
@@ -132,20 +132,20 @@ module.exports = {
       const current_vote = await Vote.findOne({
         where: {
           UserId: res.locals.user.id,
-          PostId: post.dataValues.id
-        }
-      })
+          PostId: post.dataValues.id,
+        },
+      });
 
       //El usuario ya había votado en el post
-      if(current_vote){
+      if (current_vote) {
         //El usuario ha votado lo mismo que ya tenía
-        if(current_vote.value === value){
-          res.status(200).send({post})
-          return
-        }else{
+        if (current_vote.value === value) {
+          res.status(200).send({ post });
+          return;
+        } else {
           //El usuario cambia de voto
-          current_vote.value = value
-          current_vote.save()
+          current_vote.value = value;
+          current_vote.save();
 
           /**
            * Actualizamos el valor de 'votes' de post. Tener en cuenta que al cambiar de voto,
@@ -153,30 +153,86 @@ module.exports = {
            * voto que ya tenía era negativo, y este tenia un 'votes' de 14, le quitamos el voto negativo,
            * 'votes' pasa a ser 15 y luego le añadimos el voto positivo, por lo que pasa a valer 16
            */
-          post.votes += value*2;
-          post.save()
+          post.votes += value * 2;
+          post.save();
         }
-      }else {
+      } else {
         //El usuario aun no ha votado en el post
         Vote.create({
           UserId: res.locals.user.id,
           PostId: post.id,
-          value: value
-        })
-        
+          value: value,
+        });
+
         //Actualizamos el valor de 'votes' de post
-        post.votes += value
-        post.save()
+        post.votes += value;
+        post.save();
       }
-      
+
       res.status(200).send({
-        post
+        post,
+      });
+    } catch (e) {
+      console.log(
+        "Se ha producido un error en 'votePost' del controlador 'Post': \n" + e
+      );
+
+      res.status(500).send({
+        errors: [{ error: "error interno en el servidor" }],
+      });
+    }
+  },
+  async deletePost(req, res) {
+    try {
+      const postId = req.params.id;
+
+      if (!postId) {
+        res.status(400).send({
+          errores: [{ error: "No se ha introducido el id del post" }],
+        });
+        return
+      }
+
+      const post = await Post.findByPk(postId)
+
+      if (!post) {
+        res.status(404).send({
+          errores: [{ error: `No se ha encontrado el post con id ${postId}` }],
+        });
+        return;
+      }
+
+      const communityPost = await post.getCommunity()
+      console.log("post id: " + post.dataValues.UserId)
+      console.log("usuario id: " + res.locals.user.id)
+      console.log("community id: " + communityPost.UserId)
+
+
+
+      /**
+       * Comprobamos que el post pertenezca al usuario que ha llamado a la petición, o que pertenezca
+       * a la comunidad del usuario que ha llamado a la petición
+       */
+      if(post.dataValues.UserId !== res.locals.user.id && communityPost.UserId !== res.locals.user.id){
+        res.status(401).send({
+          errores: [
+            {error: "El usuario identificado no puede eliminar el Post"}
+          ]
+        })
+        return
+      }
+
+      Post.destroy({
+        where: {id: postId}
+      })
+
+      res.send({
+        "Estado": "Post eliminado con éxito"
       })
 
     } catch (e) {
       console.log(
-        "Se ha producido un error en 'votePost' del controlador 'Post': \n" +
-          e
+        "Se ha producido un error en 'deletePost' del controlador 'Post': \n" + e
       );
 
       res.status(500).send({

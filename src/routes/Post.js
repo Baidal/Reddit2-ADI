@@ -5,4 +5,5 @@ module.exports = (app) => {
     app.get('/api/post/:id', postController.getPost)
     app.post('/api/comunidad/:com_name/post',authChecker,postController.createPost)
     app.post('/api/post/:id/vote', authChecker ,postController.votePost)
+    app.delete('/api/post/:id', authChecker, postController.deletePost)
 }
