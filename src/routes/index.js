@@ -7,4 +7,5 @@ module.exports = (app) => {
     require('./Auth')(app)
     require('./Community')(app)
     require('./Post')(app)
+    require('./Comment')(app)
 }

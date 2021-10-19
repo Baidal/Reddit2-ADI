@@ -80,7 +80,7 @@ db.Vote.belongsTo(db.Comment);
 /**
  * Many to many between comments. Each comment can have a subcomment.
  */
-db.Comment.belongsToMany(db.User, {as: 'subComments', through: 'comment_comment'})
+db.Comment.belongsToMany(db.Comment, {as: 'subComments', through: 'comment_comment'})
 
 /**
  * One to many between a community and posts. Each community can have many

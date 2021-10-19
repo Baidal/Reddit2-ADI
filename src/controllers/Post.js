@@ -203,11 +203,6 @@ module.exports = {
       }
 
       const communityPost = await post.getCommunity()
-      console.log("post id: " + post.dataValues.UserId)
-      console.log("usuario id: " + res.locals.user.id)
-      console.log("community id: " + communityPost.UserId)
-
-
 
       /**
        * Comprobamos que el post pertenezca al usuario que ha llamado a la petición, o que pertenezca
