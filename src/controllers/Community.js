@@ -1,7 +1,9 @@
 const Community = require("../models").Community;
 const Post = require("../models").Post;
-const Comment = require('../models').Comment
-const Sequelize = require('../models').Sequelize
+const Comment = require("../models").Comment;
+const Sequelize = require("../models").Sequelize;
+const User = require("../models").User;
+
 module.exports = {
   async createCommunity(req, res) {
     try {
@@ -48,16 +50,48 @@ module.exports = {
 
       const community = await Community.findOne({
         where: { name: name },
-        include: {
-          model: Post,
-          order: [["createdAt", "DESC"]],
-          include: {
-            model: Comment,
-            attributes: [
-              [Sequelize.fn('COUNT', Sequelize.col('id'), 'numComments')]
-            ]
-          }
+        attributes: {
+          include: [
+            [
+              Sequelize.fn(
+                "COUNT",
+                Sequelize.col("userFollowsCommunity->user_community.UserId")
+              ),
+              "numFollowers",
+            ],
+          ],
         },
+        include: [
+          {
+            model: Post,
+            order: [["createdAt", "DESC"]],
+            include: {
+              model: Comment,
+              attributes: [],
+            },
+            attributes: {
+              include: [
+                [
+                  Sequelize.fn("COUNT", Sequelize.col("Posts->Comments.id")),
+                  "numComments",
+                ],
+              ],
+            },
+          },
+          {
+            model: User,
+            attributes: [],
+            as: "userFollowsCommunity",
+          },
+        ],
+        group: [
+          "Community.id",
+          "Posts.id",
+          "userFollowsCommunity->user_community.createdAt",
+          "userFollowsCommunity->user_community.updatedAt",
+          "userFollowsCommunity->user_community.UserId",
+          "userFollowsCommunity->user_community.CommunityId",
+        ],
       });
 
       if (!community) {
@@ -66,10 +100,10 @@ module.exports = {
         });
         return;
       }
-
+      /*
       const usersFollowing = await community.getUsers();
 
-      community.dataValues.numFollowers = usersFollowing.length;
+      community.dataValues.numFollowers = usersFollowing.length;*/
       res.status(200).send(community);
     } catch (e) {
       console.log(
@@ -80,7 +114,6 @@ module.exports = {
       res.status(500).send({
         errors: [{ error: "error interno en el servidor" }],
       });
-
     }
   },
 };

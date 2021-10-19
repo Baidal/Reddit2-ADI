@@ -37,8 +37,8 @@ db.Community.belongsTo(db.User);
  * Many to many between user and community. An user can follow many
  * communities, and a community can be followed by many users.
  */
-db.User.belongsToMany(db.Community, { through: "user_community" });
-db.Community.belongsToMany(db.User, { through: "user_community" });
+db.User.belongsToMany(db.Community, { through: "user_community", as: "userFollowsCommunity"});
+db.Community.belongsToMany(db.User, { through: "user_community", as: "userFollowsCommunity" });
 
 /**
  * One to many between post and user. A post must have an user, and a user
