@@ -63,6 +63,7 @@ module.exports = {
         },
         include: [
           {
+            required: false,
             model: Post,
             order: [["createdAt", "DESC"]],
             include: {

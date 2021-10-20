@@ -13,15 +13,17 @@ module.exports = {
         where: { id: id },
         include: [
           {
+            required: false,
             model: Comment,
             order: ["createdAt", "DESC"],
             where: {
-              is_subComment: false
+              is_subComment: false,
             },
             include: {
+              required: false,
               model: Comment,
-              as: "subComments"
-            }
+              as: "subComments",
+            },
           },
           {
             model: User,
@@ -197,10 +199,10 @@ module.exports = {
         res.status(400).send({
           errores: [{ error: "No se ha introducido el id del post" }],
         });
-        return
+        return;
       }
 
-      const post = await Post.findByPk(postId)
+      const post = await Post.findByPk(postId);
 
       if (!post) {
         res.status(404).send({
@@ -209,32 +211,35 @@ module.exports = {
         return;
       }
 
-      const communityPost = await post.getCommunity()
+      const communityPost = await post.getCommunity();
 
       /**
        * Comprobamos que el post pertenezca al usuario que ha llamado a la petición, o que pertenezca
        * a la comunidad del usuario que ha llamado a la petición
        */
-      if(post.dataValues.UserId !== res.locals.user.id && communityPost.UserId !== res.locals.user.id){
+      if (
+        post.dataValues.UserId !== res.locals.user.id &&
+        communityPost.UserId !== res.locals.user.id
+      ) {
         res.status(401).send({
           errores: [
-            {error: "El usuario identificado no puede eliminar el Post"}
-          ]
-        })
-        return
+            { error: "El usuario identificado no puede eliminar el Post" },
+          ],
+        });
+        return;
       }
 
       Post.destroy({
-        where: {id: postId}
-      })
+        where: { id: postId },
+      });
 
       res.send({
-        "Estado": "Post eliminado con éxito"
-      })
-
+        Estado: "Post eliminado con éxito",
+      });
     } catch (e) {
       console.log(
-        "Se ha producido un error en 'deletePost' del controlador 'Post': \n" + e
+        "Se ha producido un error en 'deletePost' del controlador 'Post': \n" +
+          e
       );
 
       res.status(500).send({
