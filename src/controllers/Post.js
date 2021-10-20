@@ -3,6 +3,7 @@ const Comment = require("../models").Comment;
 const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
+const valueIsOk = require('../utils/valueChecker')
 
 module.exports = {
   async getPost(req, res) {
@@ -131,9 +132,9 @@ module.exports = {
         return;
       }
 
-      if (isNaN(value) || (value !== -1 && value !== 1)) {
+      if (!valueIsOk(value)) {
         res.status(400).send({
-          errores: [{ error: "El valor del post no es correcto" }],
+          errores: [{ error: "El valor no es correcto" }],
         });
         return;
       }
@@ -178,7 +179,7 @@ module.exports = {
         post.save();
       }
 
-      res.status(200).send({
+      res.status(201).send({
         post,
       });
     } catch (e) {

@@ -1,6 +1,5 @@
 const jwt = require("jwt-simple");
 const jwtConf = require("../config/jwtConf");
-const comparePasswords = require("../utils/checkPassword").comparePasswords;
 
 /**
  * Middleware encargado de comprobar que el usuario pasado en el

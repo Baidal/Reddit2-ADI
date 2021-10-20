@@ -2,6 +2,8 @@ const Comment = require("../models").Comment;
 const Post = require("../models").Post;
 const Community = require("../models").Community;
 const sequelize = require("../models").sequelize;
+const valueChecker = require("../utils/valueChecker")
+const Vote = require("../models").Vote;
 
 module.exports = {
   async createComment(req, res) {
@@ -157,7 +159,76 @@ module.exports = {
   },
   async voteComment(req, res) {
     try {
-      const commentId = req.params.id;
+      const CommentId = req.params.id;
+      const value = req.body.value;
+      const UserId = res.locals.user.id;
+
+      const commentToVote = await Comment.findByPk(CommentId);
+
+      if (!commentToVote) {
+        res.status(404).send({
+          errores: [
+            { error: `No se ha encontrado el comentario con id ${CommentId}` },
+          ],
+        });
+        return;
+      }
+
+      if (!value) {
+        res.status(400).send({
+          errores: [{ error: "No se ha introducido el valor del comentario" }],
+        });
+        return;
+      }
+      if (!valueChecker(value)) {
+        res.status(400).send({
+          errores: [{ error: "El valor no es correcto" }],
+        });
+        return;
+      }
+
+      const current_vote = await Vote.findOne({
+        where: {
+          UserId,
+          CommentId,
+        },
+      });
+
+      //El usuario ya ha votado el comentario
+      if (current_vote) {
+        //el usuario ha votado lo mismo
+        if (current_vote.value === value) {
+          res.send({ commentToVote });
+          return;
+        } else {
+          //el usuario cambia de voto
+          current_vote.value = value;
+          current_vote.save();
+
+          /**
+           * Actualizamos el valor de 'votes' de comment. Tener en cuenta que al cambiar de voto,
+           * estamos quitando el voto que ya tenía y le estamos añadiendo otro. Esto es, si el
+           * voto que ya tenía era negativo, y este tenia un 'votes' de 14, le quitamos el voto negativo,
+           * 'votes' pasa a ser 15 y luego le añadimos el voto positivo, por lo que pasa a valer 16
+           */
+          commentToVote.votes += value * 2;
+          commentToVote.save();
+        }
+      } else {
+        //el usuario no ha votado
+        Vote.create({
+          UserId,
+          CommentId,
+          value,
+        });
+
+        commentToVote.votes += value;
+        commentToVote.save();
+      }
+
+      res.status(201).send({
+        commentToVote,
+      });
     } catch (e) {
       console.log(
         "Se ha producido un error en 'voteComment' del controlador 'Comment': \n" +
