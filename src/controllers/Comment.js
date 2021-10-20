@@ -126,14 +126,15 @@ module.exports = {
         return;
       }
 
-      //Eliminamos primero los subcomentarios
-      await sequelize.query(`
-        delete from "Comments"
-        where "id" IN (
-          select "subCommentId"
-          from "comment_comment"
-          where "CommentId" = ${commentId}
-        )
+      //Eliminamos primero los subcomentarios si el comentario no es un subcomentario
+      if (!deleting_comment.dataValues.is_subComment)
+        await sequelize.query(`
+          delete from "Comments"
+          where "id" IN (
+            select "subCommentId"
+            from "comment_comment"
+            where "CommentId" = ${commentId}
+          )
       `);
 
       Comment.destroy({
