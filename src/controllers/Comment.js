@@ -43,7 +43,8 @@ module.exports = {
 
         const new_subcomment = await post.createComment({
             text,
-            UserId: userId
+            UserId: userId,
+            is_subComment: true
         });
 
         actualComment.addSubComment(new_subcomment)
@@ -56,6 +57,7 @@ module.exports = {
         const new_comment = await post.createComment({
           UserId: userId,
           text,
+          is_subComment: false
         });
 
         res.status(201).send({ new_comment });

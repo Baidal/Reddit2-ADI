@@ -15,6 +15,13 @@ module.exports = {
           {
             model: Comment,
             order: ["createdAt", "DESC"],
+            where: {
+              is_subComment: false
+            },
+            include: {
+              model: Comment,
+              as: "subComments"
+            }
           },
           {
             model: User,
