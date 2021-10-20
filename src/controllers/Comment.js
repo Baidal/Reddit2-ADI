@@ -146,7 +146,21 @@ module.exports = {
       });
     } catch (e) {
       console.log(
-        "Se ha producido un error en 'createComment' del controlador 'Comment': \n" +
+        "Se ha producido un error en 'deleteComment' del controlador 'Comment': \n" +
+          e
+      );
+
+      res.status(500).send({
+        errors: [{ error: "error interno en el servidor" }],
+      });
+    }
+  },
+  async voteComment(req, res) {
+    try {
+      const commentId = req.params.id;
+    } catch (e) {
+      console.log(
+        "Se ha producido un error en 'voteComment' del controlador 'Comment': \n" +
           e
       );
 
