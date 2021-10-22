@@ -4,6 +4,7 @@ const Community = require("../models").Community;
 const sequelize = require("../models").sequelize;
 const valueChecker = require("../utils/valueChecker")
 const Vote = require("../models").Vote;
+const internalError = require('../utils/internalError')
 
 module.exports = {
   async createComment(req, res) {
@@ -67,14 +68,7 @@ module.exports = {
         res.status(201).send({ new_comment });
       }
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'createComment' del controlador 'Comment': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'createComment','Comment')
     }
   },
   async deleteComment(req, res) {
@@ -147,14 +141,7 @@ module.exports = {
         Estado: "Comentario y subcomentarios eliminados con éxito",
       });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'deleteComment' del controlador 'Comment': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'deleteComment','Comment')
     }
   },
   async voteComment(req, res) {
@@ -230,14 +217,7 @@ module.exports = {
         commentToVote,
       });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'voteComment' del controlador 'Comment': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'voteComment','Comment')
     }
   },
 };

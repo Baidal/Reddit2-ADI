@@ -4,6 +4,8 @@ const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
 const valueIsOk = require('../utils/valueChecker')
+const internalError = require('../utils/internalError')
+
 
 module.exports = {
   async getPost(req, res) {
@@ -42,13 +44,7 @@ module.exports = {
 
       res.send({ post });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'getPost' del controlador 'Post': \n" + e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'getPost','Post')
     }
   },
   async createPost(req, res) {
@@ -100,14 +96,7 @@ module.exports = {
         new_post,
       });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'createPost' del controlador 'Post': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'createPost','Post')
     }
   },
   async votePost(req, res) {
@@ -183,13 +172,7 @@ module.exports = {
         post,
       });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'votePost' del controlador 'Post': \n" + e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'votePost','Post')
     }
   },
   async deletePost(req, res) {
@@ -238,14 +221,7 @@ module.exports = {
         Estado: "Post eliminado con éxito",
       });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'deletePost' del controlador 'Post': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'deletePost','Post')
     }
   },
 };

@@ -4,4 +4,5 @@ const authChecker = require('../utils/auth')
 module.exports = (app) => {
     app.post('/api/comunidad', authChecker, communityController.createCommunity)
     app.get('/api/comunidad/:name',communityController.getCommunity)
+    app.post('/api/usuario/comunidad', authChecker, communityController.followCommunity)
 }

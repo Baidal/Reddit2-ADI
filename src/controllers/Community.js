@@ -3,6 +3,8 @@ const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
 const User = require("../models").User;
+const internalError = require('../utils/internalError')
+
 
 module.exports = {
   async createCommunity(req, res) {
@@ -34,14 +36,7 @@ module.exports = {
 
       res.status(201).send(new_community);
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'createCommunity' del controlador 'Community': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'createCommunity','Community')
     }
   },
   async getCommunity(req, res) {
@@ -107,14 +102,14 @@ module.exports = {
       community.dataValues.numFollowers = usersFollowing.length;*/
       res.status(200).send(community);
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'getCommunity' del controlador 'Community': \n" +
-          e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res,e,'getCommunity','Community')
     }
   },
+  async followCommunity(req,res) {
+    try {
+      
+    } catch(e) {
+      internalError(res,e,'followCommunity', 'Community')
+    }
+  }
 };

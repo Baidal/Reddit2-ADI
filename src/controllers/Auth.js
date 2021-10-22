@@ -1,6 +1,7 @@
 const User = require("../models").User;
 const jwt = require("jwt-simple");
 const jwtConfig = require("../config/jwtConf");
+const internalError = require('../utils/internalError')
 
 const { Op } = require("sequelize");
 
@@ -39,12 +40,7 @@ module.exports = {
       const new_user = await User.create(req.body);
       res.status(201).send({ new_user });
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'register' del controlador 'Auth': \n" + e
-      );
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res, e, 'register', 'Auth')
     }
   },
   async login(req, res) {
@@ -97,13 +93,7 @@ module.exports = {
         })
       }
     } catch (e) {
-      console.log(
-        "Se ha producido un error en 'register' del controlador 'Auth': \n" + e
-      );
-
-      res.status(500).send({
-        errors: [{ error: "error interno en el servidor" }],
-      });
+      internalError(res, e, 'login', 'Auth')
     }
   },
 };
