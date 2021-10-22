@@ -28,8 +28,8 @@ module.exports = {
         where: { id: id },
         include: [
           {
-            limit: limit,
-            offset: offset,
+            limit,
+            offset,
             required: false,
             model: Comment,
             order: [["createdAt", "DESC"]],
