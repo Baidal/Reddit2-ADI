@@ -3,8 +3,7 @@ const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
 const User = require("../models").User;
-const internalError = require('../utils/internalError')
-
+const internalError = require("../utils/internalError");
 
 module.exports = {
   async createCommunity(req, res) {
@@ -36,7 +35,7 @@ module.exports = {
 
       res.status(201).send(new_community);
     } catch (e) {
-      internalError(res,e,'createCommunity','Community')
+      internalError(res, e, "createCommunity", "Community");
     }
   },
   async getCommunity(req, res) {
@@ -60,11 +59,18 @@ module.exports = {
           {
             required: false,
             model: Post,
-            order: [["createdAt", "DESC"]],
-            include: {
-              model: Comment,
-              attributes: [],
-            },
+            include: [
+              {
+                model: Comment,
+                attributes: [],
+                required: false,
+              },
+              {
+                model: User,
+                attributes: ["nick"],
+                required: false,
+              },
+            ],
             attributes: {
               include: [
                 [
@@ -87,7 +93,9 @@ module.exports = {
           "userFollowsCommunity->user_community.updatedAt",
           "userFollowsCommunity->user_community.UserId",
           "userFollowsCommunity->user_community.CommunityId",
+          "Posts->User.id",
         ],
+        order: [[Post, "createdAt", "DESC"]],
       });
 
       if (!community) {
@@ -102,44 +110,42 @@ module.exports = {
       community.dataValues.numFollowers = usersFollowing.length;*/
       res.status(200).send(community);
     } catch (e) {
-      internalError(res,e,'getCommunity','Community')
+      internalError(res, e, "getCommunity", "Community");
     }
   },
-  async followCommunity(req,res) {
+  async followCommunity(req, res) {
     try {
-      const communityName = req.params.name
+      const communityName = req.params.name;
 
       const community = await Community.findOne({
-        where: {name: communityName}
-      })
+        where: { name: communityName },
+      });
 
-      const user = res.locals.user
+      const user = res.locals.user;
 
-      if(!community) {
+      if (!community) {
         res.status(404).send({
           errores: [
-            {error: `No se ha encontrado la comunidad ${communityName}`}
-          ]
-        })
+            { error: `No se ha encontrado la comunidad ${communityName}` },
+          ],
+        });
       }
 
       //el usuario ya sigue la comunidad, la eliminamos
-      if(await community.hasUserFollowsCommunity(user.id)){
-        community.removeUserFollowsCommunity(user.id)
+      if (await community.hasUserFollowsCommunity(user.id)) {
+        community.removeUserFollowsCommunity(user.id);
         res.status(200).send({
-          "status": "Comunidad eliminada con éxito"
-        }) 
-      }else {
+          status: "Comunidad eliminada con éxito",
+        });
+      } else {
         //el usuario no sigue la comunidad
-        community.addUserFollowsCommunity(user.id)
+        community.addUserFollowsCommunity(user.id);
         res.status(200).send({
-          "status": "Comunidad añadida con éxito"
-        })
+          status: "Comunidad añadida con éxito",
+        });
       }
-
-
-    } catch(e) {
-      internalError(res,e,'followCommunity', 'Community')
+    } catch (e) {
+      internalError(res, e, "followCommunity", "Community");
     }
-  }
+  },
 };

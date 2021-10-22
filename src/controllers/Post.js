@@ -3,9 +3,8 @@ const Comment = require("../models").Comment;
 const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
-const valueIsOk = require('../utils/valueChecker')
-const internalError = require('../utils/internalError')
-
+const valueIsOk = require("../utils/valueChecker");
+const internalError = require("../utils/internalError");
 
 module.exports = {
   async getPost(req, res) {
@@ -22,11 +21,17 @@ module.exports = {
             where: {
               is_subComment: false,
             },
-            include: {
-              required: false,
-              model: Comment,
-              as: "subComments",
-            },
+            include: [
+              {
+                required: false,
+                model: Comment,
+                as: "subComments",
+              },
+              {
+                model: User,
+                attributes: ["nick"],
+              },
+            ],
           },
           {
             model: User,
@@ -44,7 +49,7 @@ module.exports = {
 
       res.send({ post });
     } catch (e) {
-      internalError(res,e,'getPost','Post')
+      internalError(res, e, "getPost", "Post");
     }
   },
   async createPost(req, res) {
@@ -96,7 +101,7 @@ module.exports = {
         new_post,
       });
     } catch (e) {
-      internalError(res,e,'createPost','Post')
+      internalError(res, e, "createPost", "Post");
     }
   },
   async votePost(req, res) {
@@ -172,7 +177,7 @@ module.exports = {
         post,
       });
     } catch (e) {
-      internalError(res,e,'votePost','Post')
+      internalError(res, e, "votePost", "Post");
     }
   },
   async deletePost(req, res) {
@@ -221,7 +226,7 @@ module.exports = {
         Estado: "Post eliminado con éxito",
       });
     } catch (e) {
-      internalError(res,e,'deletePost','Post')
+      internalError(res, e, "deletePost", "Post");
     }
   },
 };
