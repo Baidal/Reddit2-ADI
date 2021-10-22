@@ -35,9 +35,9 @@ module.exports = {
           },
           {
             model: User,
-            order: ["createdAt", "DESC"],
           },
         ],
+        order: [[Comment, "createdAt", "DESC"]]
       });
 
       if (!post) {
