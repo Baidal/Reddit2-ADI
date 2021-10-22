@@ -3,6 +3,8 @@ const Comment = require("../models").Comment;
 const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
+const sequelize = require("../models").sequelize;
+
 const valueIsOk = require("../utils/valueChecker");
 const internalError = require("../utils/internalError");
 
@@ -10,14 +12,27 @@ module.exports = {
   async getPost(req, res) {
     try {
       const id = req.params.id;
+      let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
+      let limit = req.query.limit;
+
+      /**
+       * Nos aseguramos de que se hayan introducido los valores en la url
+       */
+      offset = offset ? offset : 0;
+      limit = limit ? limit : 20;
+
+      limit = limit > 20 ? 20 : limit; //comprobamos que el limite no supere los 20 casos
+      offset = limit * offset;
 
       const post = await Post.findOne({
         where: { id: id },
         include: [
           {
+            limit: limit,
+            offset: offset,
             required: false,
             model: Comment,
-            order: ["createdAt", "DESC"],
+            order: [["createdAt", "DESC"]],
             where: {
               is_subComment: false,
             },
@@ -26,6 +41,7 @@ module.exports = {
                 required: false,
                 model: Comment,
                 as: "subComments",
+                include: { model: User, attributes: ["nick"] },
               },
               {
                 model: User,
@@ -37,7 +53,6 @@ module.exports = {
             model: User,
           },
         ],
-        order: [[Comment, "createdAt", "DESC"]]
       });
 
       if (!post) {
