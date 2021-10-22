@@ -41,9 +41,22 @@ module.exports = {
   async getCommunity(req, res) {
     try {
       const name = req.params.name;
+      let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
+      let limit = req.query.limit;
+
+      /**
+       * Nos aseguramos de que se hayan introducido los valores en la url
+       */
+      offset = offset ? offset : 0;
+      limit = limit ? limit : 20;
+ 
+      limit = limit > 10 ? 10 : limit; //comprobamos que el limite no supere los 20 casos
+      offset = limit * offset;
 
       const community = await Community.findOne({
         where: { name: name },
+        limit,
+        offset,
         attributes: {
           include: [
             [
@@ -61,14 +74,14 @@ module.exports = {
             model: Post,
             include: [
               {
+                required: false,
                 model: Comment,
                 attributes: [],
-                required: false,
               },
               {
+                required: false,
                 model: User,
                 attributes: ["nick"],
-                required: false,
               },
             ],
             attributes: {
@@ -95,7 +108,10 @@ module.exports = {
           "userFollowsCommunity->user_community.CommunityId",
           "Posts->User.id",
         ],
-        order: [[Post, "createdAt", "DESC"]],
+        order: [
+          [Post, "createdAt", "DESC"]
+        ],
+        subQuery: false
       });
 
       if (!community) {
@@ -104,10 +120,7 @@ module.exports = {
         });
         return;
       }
-      /*
-      const usersFollowing = await community.getUsers();
 
-      community.dataValues.numFollowers = usersFollowing.length;*/
       res.status(200).send(community);
     } catch (e) {
       internalError(res, e, "getCommunity", "Community");
