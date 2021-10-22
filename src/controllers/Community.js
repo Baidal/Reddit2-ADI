@@ -107,7 +107,37 @@ module.exports = {
   },
   async followCommunity(req,res) {
     try {
-      
+      const communityName = req.params.name
+
+      const community = await Community.findOne({
+        where: {name: communityName}
+      })
+
+      const user = res.locals.user
+
+      if(!community) {
+        res.status(404).send({
+          errores: [
+            {error: `No se ha encontrado la comunidad ${communityName}`}
+          ]
+        })
+      }
+
+      //el usuario ya sigue la comunidad, la eliminamos
+      if(await community.hasUserFollowsCommunity(user.id)){
+        community.removeUserFollowsCommunity(user.id)
+        res.status(200).send({
+          "status": "Comunidad eliminada con éxito"
+        }) 
+      }else {
+        //el usuario no sigue la comunidad
+        community.addUserFollowsCommunity(user.id)
+        res.status(200).send({
+          "status": "Comunidad añadida con éxito"
+        })
+      }
+
+
     } catch(e) {
       internalError(res,e,'followCommunity', 'Community')
     }
