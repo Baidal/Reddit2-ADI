@@ -37,7 +37,20 @@ module.exports = {
         return;
       }
 
-      const new_user = await User.create(req.body);
+      let urlImage = ""
+
+      if(req.files && req.files.profileImage) {
+        const profileImage = req.files.profileImage
+        urlImage = process.cwd() + "/public/uploads/profiles/" + nick + "." + profileImage.mimetype.split("/")[1]
+
+        profileImage.mv(urlImage, (err) => {
+          if(err)
+            return internalError(res, err, 'uploadFile', 'Auth')
+
+        })
+      }
+
+      const new_user = await User.create({...req.body, url_image: urlImage});
       res.status(201).send({ new_user });
     } catch (e) {
       internalError(res, e, 'register', 'Auth')
