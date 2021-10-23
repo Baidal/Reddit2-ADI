@@ -38,10 +38,16 @@ module.exports = {
       }
 
       let urlImage = ""
+      let absolutePath = ""
+      let relativePath = ""
 
       if(req.files && req.files.profileImage) {
         const profileImage = req.files.profileImage
-        urlImage = process.cwd() + "/public/uploads/profiles/" + nick + "." + profileImage.mimetype.split("/")[1]
+        
+        absolutePath = process.cwd()
+        relativePath = '/public/uploads/profiles/' + nick + "." + profileImage.mimetype.split("/")[1]
+        
+        urlImage = absolutePath + relativePath 
 
         profileImage.mv(urlImage, (err) => {
           if(err)
@@ -50,7 +56,7 @@ module.exports = {
         })
       }
 
-      const new_user = await User.create({...req.body, url_image: urlImage});
+      const new_user = await User.create({...req.body, url_image: relativePath});
       res.status(201).send({ new_user });
     } catch (e) {
       internalError(res, e, 'register', 'Auth')

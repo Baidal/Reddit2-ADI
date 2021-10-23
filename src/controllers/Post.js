@@ -1,3 +1,5 @@
+const hash = require("object-hash");
+
 const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const User = require("../models").User;
@@ -100,12 +102,36 @@ module.exports = {
         return;
       }
 
-      const new_post = await Post.create({
+      const post_data = {
         title,
         text,
         UserId: res.locals.user.id,
         CommunityId: community.dataValues.id,
-      });
+      };
+
+      
+
+      if (req.files && req.files.postImage) {
+        const postImage = req.files.postImage;
+
+        let urlImage = "";
+        const absolutePath = process.cwd();
+        const relativePath =
+          "/public/uploads/posts/" +
+          hash({ ...post_data, date: new Date() }) + //Creamos el nombre de la imagen del post hasheando los datos del post + la fecha actual, para que no se solapen dos imágenes
+          "." +
+          postImage.mimetype.split("/")[1];
+
+        urlImage = absolutePath + relativePath;
+
+        postImage.mv(urlImage, (err) => {
+          if (err) return internalError(res, err, "uploadFile", "Post");
+        });
+
+        post_data.url_image = relativePath;
+      }
+
+      const new_post = await Post.create(post_data);
 
       new_post.dataValues.numComments = 0;
       new_post.dataValues.comments = [];
