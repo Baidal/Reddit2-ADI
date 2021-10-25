@@ -21,9 +21,10 @@ require('./routes')(app)
 
 const port = process.env.PORT || 3000
 
+const test_mode = process.env.TEST === 'true'
 const db = require('./models')
 
-db.sequelize.sync({force: false}).then(() => {
+db.sequelize.sync({force: test_mode}).then(() => {
     app.listen(port)
     console.log(`Servidor escuchando en el puerto ${port}`);
 })

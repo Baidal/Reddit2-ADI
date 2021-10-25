@@ -11,7 +11,7 @@ module.exports = {
   async register(req, res) {
     try {
       const { nick, email } = req.body;
-      const errors = { errors: [] };
+      const errores = { errores: [] };
 
       const userAlreadyLogged = await User.findOne({
         where: {
@@ -28,12 +28,12 @@ module.exports = {
 
       if (userAlreadyLogged) {
         if (userAlreadyLogged.email === email)
-          errors.errors.push({ error: "El email introducido ya existe." });
+          errores.errores.push({ error: "El email introducido ya existe." });
 
         if (userAlreadyLogged.nick === nick)
-          errors.errors.push({ error: "El nick introducido ya existe." });
+          errores.errores.push({ error: "El nick introducido ya existe." });
 
-        res.status(400).send(errors);
+        res.status(400).send(errores);
         return;
       }
 
@@ -41,6 +41,9 @@ module.exports = {
       let absolutePath = ""
       let relativePath = ""
 
+      /**
+       * Guardamos la informacion de la imagen de perfil del usuario
+       */
       if(req.files && req.files.profileImage) {
         const profileImage = req.files.profileImage
         
@@ -66,16 +69,16 @@ module.exports = {
     try {
       const { nickEmail, password } = req.body;
 
-      const errors = {errors: []}
+      const errores = {errores: []}
 
       if(!nickEmail)
-        errors.errors.push({error: "Debes introducir el nick o el email del usuario."})
+        errores.errores.push({error: "Debes introducir el nick o el email del usuario."})
       
       if(!password) 
-        errors.errors.push({error: "Debes introducir la contraseña."})
+        errores.errores.push({error: "Debes introducir la contraseña."})
       
-      if(errors.errors.length > 0){
-        res.status(400).send(errors)
+      if(errores.errores.length > 0){
+        res.status(400).send(errores)
         return
       }
 
@@ -98,15 +101,15 @@ module.exports = {
             token
           })
         } else {
-          res.status(400).send({
-            errors: [
+          res.status(404).send({
+            errores: [
               {error: "Usuario no encontrado en el sistema o contraseña incorrecta."}
             ]
           })
         }
       } else{
-        res.status(400).send({
-          errors: [
+        res.status(404).send({
+          errores: [
             {error: "Usuario no encontrado en el sistema o contraseña incorrecta."}
           ]
         })

@@ -12,30 +12,30 @@ module.exports = {
       description: Joi.string(),
     });
 
-    const errors = { errors: [] };
+    const errores = { errores: [] };
     const { error } = user.validate(req.body);
 
     if (error) {
       switch (error.details[0].context.key) {
         case "email":
-          errors.errors.push({ error: "Debes introducir un email válido." });
+          errores.errores.push({ error: "Debes introducir un email válido." });
           break;
         case "nick":
-          errors.errors.push({ error: "Debes introducir un nick." });
+          errores.errores.push({ error: "Debes introducir un nick." });
           break;
         case "password":
-          errors.errors.push({
+          errores.errores.push({
             error: "Debes introducir una contraseña correcta.",
           });
           break;
         case "description":
-          errors.errors.push({ error: "Error en la descripción." });
+          errores.errores.push({ error: "Error en la descripción." });
           break;
       }
     }
 
-    if (errors.errors.length !== 0) {
-      res.status(400).send(errors);
+    if (errores.errores.length !== 0) {
+      res.status(400).send(errores);
       return;
     }
 

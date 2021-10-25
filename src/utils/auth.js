@@ -7,8 +7,8 @@ const jwtConf = require("../config/jwtConf");
  */
 module.exports = authMiddleware = async (req, res, next) => {
   if (!req.headers.authorization) {
-    res.status(401).send({
-      errors: [
+    return res.status(401).send({
+      errores: [
         {
           error: "Token no introducido en la petición",
         },

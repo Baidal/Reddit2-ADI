@@ -59,7 +59,7 @@ module.exports = {
 
       if (!post) {
         res.status(404).send({
-          errors: [{ error: `No se ha encontrado el Post con id ${id}` }],
+          errores: [{ error: `No se ha encontrado el Post con id ${id}` }],
         });
         return;
       }
@@ -109,8 +109,9 @@ module.exports = {
         CommunityId: community.dataValues.id,
       };
 
-      
-
+      /**
+       * Comprobamos si han enviado algún dato, y lo guardamos
+       */
       if (req.files && req.files.postImage) {
         const postImage = req.files.postImage;
 
