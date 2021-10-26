@@ -4,7 +4,8 @@
   "description": "Aplicación demo basada en la red social Reddit",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "nodemon ./src/index.js",
+    "doc": "aglio --theme-variables slate -i ./doc/api_documentation.blueprint -o doc.html"
   },
   "repository": {
     "type": "git",

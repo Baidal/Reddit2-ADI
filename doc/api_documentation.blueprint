@@ -1,0 +1,501 @@
+FORMAT: 1A
+
+# ADI-Reddit
+El API de Reddit para la asignatura de ADI proporciona todas las funcionalidades
+para la gestión de una red social que imita a Reddit. Esta permite crear nuevos usuarios,
+nuevas comunidades, posts y comentarios. También permite a los usuarios votar por sus
+posts favoritos, seguir a nuevas comunidades y ver los posts de estas.
+
+# Group Usuarios
+Recursos asociados a la gestión de los usuarios en la aplicación.
+
+## Registro de usuarios [/api/register]
+
+### Creación de un nuevo usuario [POST]
+
+Crea un nuevo usuario a partir de los datos pasados en el cuerpo de la petición.
+
++ nick (string) - Nick que identificará al usuario dentro de la aplicación. Este deberá
+ser único.
++ password (string) - Contraseña del usuario. Esta deberá tener una longitud mínima de 8
+carácteres.
++ description (string) - Descripción del usuario.
++ email (string) - Email del usuario, que también lo identificará. El email de cada usuario
+debe ser único.
+
++ Request (application/json)
+ 
+        {
+            "nick": "elbaidal",
+            "password": "12345678",
+            "description": "Hola soy elbaidal, que tal",
+            "email": "luis@gmail.com"
+        }
+
++ Response 201 (application/json)
+    
+    + Body
+    
+            {
+                "new_user": {
+                    "id": 22,
+                    "email": "luis@gmail.com",
+                    "nick": "elbaidal",
+                    "password": "$2b$08$v4WQXH41viHcbiRwBGYOKOIzcVWxwzU72Sgrr.Om.yLN4Ng/.8BOS",
+                    "url_image": "",
+                    "updatedAt": "2021-10-26T15:38:01.534Z",
+                    "createdAt": "2021-10-26T15:38:01.534Z",
+                    "description": "Hola soy elbaidal, que tal",
+                }
+            }
+
++ Response 400 (application/json)
+    
+    + Body
+    
+            {
+                "errores": [
+                    {
+                        "error": "El email introducido ya existe."
+                    },
+                    {
+                        "error": "El nick introducido ya existe."
+                    },
+                    {
+                        "error": "Debes introducir un email válido."
+                    },
+                    {
+                        "error": "Debes introducir un nick válido."
+                    },
+                    {
+                        "error": "Debes introducir una contraseña correcta."
+                    }
+                ]
+            }
+
+## Login de usuarios [/api/login]
+
+### Loggear un usuario [POST]
+
+Realiza la acción de login a un usuario. En caso de que el login sea correcto,
+devuelve toda la información del usuario y el token que lo identifica.
+
++ nickEmail (string) - Este campo sirve para indicar el email o el nick del
+usuario que quiere iniciar sesión. Se puede utilizar cualquiera de los dos.
++ password (string) - Contraseña del usuario que quiere iniciar sesión.
+
++ Request (application/json)
+
+        {
+            "nickEmail": "baidal",
+            "password": "12345678"
+        }
+      
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "user": {
+                    "id": 21,
+                    "nick": "baidal",
+                    "password": "$2b$08$QFrcUXvNW3iVRpjDTiRvE.kfgiRhuuy7TggZGlFVAv3/fH0kjPZ9C",
+                    "url_image": "",
+                    "description": null,
+                    "email": "luis@gmail",
+                    "createdAt": "2021-10-23T22:01:14.936Z",
+                    "updatedAt": "2021-10-23T22:01:14.936Z"
+                },
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJ..."
+            }
+
++ Response 404 (application/json)
+
+    + Body
+
+            {
+                "errores": [
+                    {
+                        "error": "Usuario no encontrado en el sistema o contraseña incorrecta."
+                    },
+                    {
+                        "error": "Debes introducir el nick o el email del usuario."
+                    }
+                ]
+            }
+
+# Group Comunidad
+Recursos asociados a la gestión de las comunidades en la aplicación.
+
+## Creación de comunidades [/api/comunidad]
+
+### Creación de una comunidad [POST]
+
+Creación de una nueva comunidad a partir de un usuario.
+
++ name (string) - Nombre único que identificará a la comuidad. Cada comunidad ha de tener un nombre diferente.
++ description (string) - Descripción de la comunidad.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer token
+
+    + Body 
+
+            {
+                "name": "baidal",
+                "description": "Mi primera comunidad"
+            }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "id": 3,
+                "name": "baidal",
+                "description": "Mi primera comunidad",
+                "UserId": 21,
+                "updatedAt": "2021-10-26T16:06:16.280Z",
+                "createdAt": "2021-10-26T16:06:16.280Z",
+                "posts": []
+            }
+
++ Response 400 (application/json)
+    
+    + Body
+
+            {
+                "errores": [
+                    {
+                        "error": "El nombre de la comunidad ya está en uso"
+                    },
+                    {
+                        "error": "No se ha introducido el nombre"
+                    }
+                ]
+            }
+
+## Acceso a comunidades [/api/comunidad/{nombre}{?limit,page}]
+
++ Parameters
+    + nombre: baidal (string) - Nombre de la comunidad a identificar.
+    + limit: 5 (optional, number) - Limite de posts obtenidos de la comunidad. Si no se indica el valor, por defecto es 10. El valor se limita a 10.
+    + page: 5 (optional, number) - Página que se quiere mostrar de los posts. Este valor se corresponde al offset.
+
+### Obtener una comunidad [GET]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "id": 1,
+                "name": "baidal",
+                "description": "Mi primera comunidad",
+                "createdAt": "2021-10-20T22:50:54.762Z",
+                "updatedAt": "2021-10-20T22:50:54.762Z",
+                "UserId": 1,
+                "numFollowers": "1",
+                "Posts": [
+                    {
+                        "id": 15,
+                        "title": "post prueba imagen",
+                        "text": "este es un post de prueba xdd",
+                        "url_image": "/public/uploads/posts/dbbbb64399af34543f03fe28ba0633298e2464b3.jpeg",
+                        "votes": 0,
+                        "createdAt": "2021-10-23T16:02:19.498Z",
+                        "updatedAt": "2021-10-23T16:02:19.498Z",
+                        "UserId": 1,
+                        "CommunityId": 1,
+                        "numComments": "0",
+                        "User": {
+                            "nick": "luisepico"
+                        }
+                    },
+                ]
+            }
+
+## Modificación de comunidades [/api/comunidad/{nombre}]
+Se permite la modificación parcial de una comunidad.
+
++ Parameters
+    + nombre: baidal (string) - Nombre de la comunidad a modificar.
+
+### Modificar una comunidad [PATCH] 
+
++ name (optional, string) - Nombre de la nueva comunidad. Este no debe pertenecer a ninguna otra comunidad.
++ description (optional, string) - Nueva descripción de la comunidad.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer token
+
+    + Body
+
+            {
+                "name": "baidal453",
+                "description": "Mi segunda comunidad"
+            }
+
++ Response 200 (application/json)
+        
+    + Body
+
+            {
+                "community": {
+                    "id": 1,
+                    "name": "baidal453",
+                    "description": "Mi segunda comunidad",
+                    "createdAt": "2021-10-20T22:50:54.762Z",
+                    "updatedAt": "2021-10-26T16:26:08.791Z",
+                    "UserId": 1
+                }
+            }
+
++ Response 401 (application/json)
+        
+    + Body
+
+            {
+                "errores": [
+                    {
+                        "error": "No tienes permisos para modificar la comunidad"
+                    }
+                ]
+            }
+
++ Response 404 (application/json)
+
+    + Body
+    
+            {
+                "errores": [
+                    {
+                        "error": "No se ha encontrado la comunidad baidal"
+                    }
+                ]
+            }
+
++ Response 400 (application/json)
+
+    + Body
+
+            {
+                "errores": [
+                    {
+                        "error": "La comunidad con nombre baidal ya existe"
+                    }
+                ]
+            }
+
+
+## Seguir a comunidades [/api/comunidad/usuario/{nombre}]
+Se permite a un usuario identificado seguir a una comunidad para estar al tanto de los nuevos posts creados en esta.
+
++ Parameters
+    + nombre: baidal (string) - Nombre de la comunidad a seguir.
+
+
+### Seguir a una comunidad [POST]
+
++ Request 
+
+    + Headers
+
+            Authorization: Bearer token
+
++ Response 200 (application/json)
+
+        {
+            "status": "Comunidad añadida con éxito o Comunidad eliminada con éxito",
+            
+        }
+
++ Response 404 (application/json)
+    
+        {
+            "errores": [
+                {
+                    "error": "No se ha encontrado la comunidad baidal4sd"
+                }
+            ]
+        }
+
+# Group Posts
+Grupo de recursos que permite crear, listar y votar los posts de la aplicación.
+
+## Creación de posts [/api/comunidad/{comunidad}/post]
+
++ Parameters
+    + comunidad: baidal (string) - Nombre de la comunidad en la que se desea crear el post. Cada post de la aplicación debe estar asociado a una comunidad.
+
+### Creación de un post [POST]
+Se crea un nuevo post a partir de los datos proporcionados.
+
++ postImage (image) - Imagen del post
++ text (string) - Texto del post.
++ title (string) - Título del post. Este campo es requerido.
+
++ Request
+
+    + Headers
+            
+            Authorization: Bearer token
+
+    + Body
+
+            {
+                "postImage": "file",
+                "text": "Este es un texto",
+                "title": "Título del post"
+            }
+
++ Response 201 (application/json)
+
+        {
+            "new_post": {
+                "votes": 0,
+                "id": 16,
+                "title": "post prueba imagen",
+                "text": "este es un post de prueba xdd",
+                "UserId": 1,
+                "CommunityId": 1,
+                "updatedAt": "2021-10-26T17:10:10.339Z",
+                "createdAt": "2021-10-26T17:10:10.339Z",
+                "url_image": null,
+                "numComments": 0,
+                "comments": [],
+                "userNick": "luisepico",
+                "communityName": "baidal453"
+            }
+        }
+
++ Response 400 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "No se ha encontrado la comunidad baidal3"
+                },
+                {
+                    "error": "No se ha introducido el título del post"
+                }
+            ]
+        }
+
+## Obtención de posts [/api/post/{post_id}{?limit,page}]
+
++ Parameters
+    + post_id: 1 (number) - Identificador del post a obtener.
+    + limit: 5 (optional, number) - Limite de comentarios obtenidos del post. Si no se indica el valor, por defecto es 10. El valor se limita a 10.
+    + page: 5 (optional, number) - Página que se quiere mostrar de los comentarios. Este valor se corresponde al offset.
+
+### Obtención de un post [GET]
+Se obtienen los datos de un post, junto con sus comentarios.
+
++ Response 200 (application/json)
+
+        {
+            "post": {
+                "id": 1,
+                "title": "Primer post",
+                "text": "Sisisisisi",
+                "url_image": null,
+                "votes": 1,
+                "createdAt": "2021-10-20T22:51:01.155Z",
+                "updatedAt": "2021-10-20T22:59:17.807Z",
+                "UserId": 1,
+                "CommunityId": 1,
+                "User": {
+                    "id": 1,
+                    "nick": "luisepico",
+                    "password": "$2b$08$A7UvhNY3sr920b1R3/FkJOCcL5VcT5G6ANqcsp2t3w10cWyXRGLLa",
+                    "url_image": null,
+                    "description": null,
+                    "email": "luisepcio@gmail.com",
+                    "createdAt": "2021-10-20T22:50:21.079Z",
+                    "updatedAt": "2021-10-20T22:50:21.079Z"
+                },
+                "Comments": [
+                    {
+                        "id": 3,
+                        "text": "Primer comentario",
+                        "votes": 0,
+                        "is_subComment": false,
+                        "createdAt": "2021-10-22T20:41:44.427Z",
+                        "updatedAt": "2021-10-22T20:41:44.427Z",
+                        "UserId": 1,
+                        "PostId": 1,
+                        "subComments": [
+                            {
+                                "id": 4,
+                                "text": "Primer subcomentario del primer comentario",
+                                "votes": 0,
+                                "is_subComment": true,
+                                "createdAt": "2021-10-22T20:42:15.505Z",
+                                "updatedAt": "2021-10-22T20:42:15.505Z",
+                                "UserId": 1,
+                                "PostId": 1,
+                                "User": {
+                                    "nick": "luisepico"
+                                },
+                                "comment_comment": {
+                                    "createdAt": "2021-10-22T20:42:15.511Z",
+                                    "updatedAt": "2021-10-22T20:42:15.511Z",
+                                    "CommentId": 3,
+                                    "subCommentId": 4
+                                }
+                            }
+                        ],
+                        "User": {
+                            "nick": "luisepico"
+                        }
+                    }
+                ]
+            }
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "No se ha encontrado el Post con id 31"
+                }
+            ]
+        }
+
+## Eliminación de posts [/api/post/{post_id}]
+
++ Parameters
+    + post_id: 1 (number) - Identificador del post a eliminar.
+
+### Eliminación de un post [DELETE]
+Se elimina un post y toda la información relacionada a él (comentarios y subcomentarios).
+
++ Request
+
+    + Headers
+            
+            Authorization: Bearer token
+
++ Response 200 (application/json)
+
+        {
+            "Estado": "Post eliminado con éxito"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "El usuario identificado no puede eliminar el Post"
+                }
+            ]
+        }
