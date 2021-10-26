@@ -933,6 +933,186 @@
 					"response": []
 				},
 				{
+					"name": "Vote post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vote post status is 200\", function() {\r",
+									"    pm.response.to.have.status(201)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Vote post is OK\", function () {\r",
+									"    var post = pm.response.json().post;\r",
+									"    pm.expect(post.votes).to.eql(1);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/post/1/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"post",
+								"1",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Downvote post status is 201\", function() {\r",
+									"    pm.response.to.have.status(201)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Downvote post is OK\", function () {\r",
+									"    var post = pm.response.json().post;\r",
+									"    pm.expect(post.votes).to.eql(-1);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": -1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/post/1/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"post",
+								"1",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vote post incorrect data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vote post with incorrect value status is 400\", function() {\r",
+									"    pm.response.to.have.status(400);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Incorrect vote response is ok\", function () {\r",
+									"    var errores = pm.response.json().errores;\r",
+									"    pm.expect(errores[0].error).to.eql(\"El valor no es correcto\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/post/2/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"post",
+								"2",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Post",
 					"event": [
 						{
@@ -948,7 +1128,7 @@
 									"    var user = post.User\r",
 									"    \r",
 									"    //post data is ok\r",
-									"    pm.expect(post.votes).to.eql(0);\r",
+									"    pm.expect(post.votes).to.eql(-1);\r",
 									"    pm.expect(post.title).to.eql(\"Post 1 en test\");\r",
 									"    pm.expect(post.text).to.eql(\"Post en test\");\r",
 									"    pm.expect(post.url_image).to.eql(null);\r",
@@ -995,6 +1175,61 @@
 								"api",
 								"post",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get community retrieves post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get community satus is 200\", function() {\r",
+									"    pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Get community and posts data is ok\", function () {\r",
+									"    var posts = pm.response.json().Posts;\r",
+									"    var post1 = posts[0]\r",
+									"    var post2 = posts[1]\r",
+									"\r",
+									"    //post data is ok\r",
+									"    pm.expect(post1.votes).to.eql(0);\r",
+									"    pm.expect(post1.title).to.eql(\"Post 2 en test\");\r",
+									"    pm.expect(post1.text).to.eql(\"Post en test\");\r",
+									"    pm.expect(post1.url_image).to.eql(null);\r",
+									"    pm.expect(post1.numComments).to.eql(\"0\");\r",
+									"\r",
+									"    pm.expect(post2.votes).to.eql(-1);\r",
+									"    pm.expect(post2.title).to.eql(\"Post 1 en test\");\r",
+									"    pm.expect(post2.text).to.eql(\"Post en test\");\r",
+									"    pm.expect(post2.url_image).to.eql(null);\r",
+									"    pm.expect(post2.numComments).to.eql(\"0\");\r",
+									"\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/comunidad/baidal",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comunidad",
+								"baidal"
 							]
 						}
 					},
@@ -1404,6 +1639,230 @@
 								"api",
 								"post",
 								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vote comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Vote comment status is 201\", function() {\r",
+									"    pm.response.to.have.status(201)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Comment vote data is Ok\", function () {\r",
+									"    var comment = pm.response.json().commentToVote;\r",
+									"\r",
+									"    //comment check\r",
+									"    pm.expect(comment.votes).to.eql(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/comment/1/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comment",
+								"1",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Downvote comment status is 201\", function() {\r",
+									"    pm.response.to.have.status(201)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Comment vote data is Ok\", function () {\r",
+									"    var comment = pm.response.json().commentToVote;\r",
+									"\r",
+									"    //comment check\r",
+									"    pm.expect(comment.votes).to.eql(-1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"value\": -1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/comment/1/vote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comment",
+								"1",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment without permission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete comment without permission status is 401\", function() {\r",
+									"    pm.response.to.have.status(401)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Errors on deleting without permission are ok\", function () {\r",
+									"    var error = pm.response.json().errores;\r",
+									"\r",
+									"    //comment check\r",
+									"    pm.expect(error[0].error).to.eql(\"No tienes permisos para eliminar este comentario\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/comment/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete comment status is 200\", function() {\r",
+									"    pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Deleting comment is ok\", function () {\r",
+									"    var response = pm.response.json().Estado;\r",
+									"\r",
+									"    //comment check\r",
+									"    pm.expect(response).to.eql(\"Comentario y subcomentarios eliminados con éxito\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/comment/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comment",
+								"1"
 							]
 						}
 					},
