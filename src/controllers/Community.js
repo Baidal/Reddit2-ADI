@@ -49,7 +49,7 @@ module.exports = {
        */
       offset = offset ? offset : 0;
       limit = limit ? limit : 20;
- 
+
       limit = limit > 10 ? 10 : limit; //comprobamos que el limite no supere los 20 casos
       offset = limit * offset;
 
@@ -108,10 +108,8 @@ module.exports = {
           "userFollowsCommunity->user_community.CommunityId",
           "Posts->User.id",
         ],
-        order: [
-          [Post, "createdAt", "DESC"]
-        ],
-        subQuery: false
+        order: [[Post, "createdAt", "DESC"]],
+        subQuery: false,
       });
 
       if (!community) {
@@ -160,5 +158,55 @@ module.exports = {
     } catch (e) {
       internalError(res, e, "followCommunity", "Community");
     }
+  },
+  async updateCommunity(req, res) {
+    const communityName = req.params.name;
+    const { name, description } = req.body;
+
+    if (!communityName)
+      return res.status(400).send({
+        errores: [{ error: "No se ha introducido el nombre de la comunidad" }],
+      });
+
+    const community = await Community.findOne({
+      where: { name: communityName },
+    });
+
+    if (!community) {
+      return res.status(404).send({
+        errores: [
+          { error: `No se ha encontrado la comunidad ${communityName}` },
+        ],
+      });
+    }
+
+    const user_id = res.locals.user.id;
+    const community_user_id = community.dataValues.UserId;
+
+    //El usuario no puede modificar la comunidad
+    if (user_id !== community_user_id)
+      return res.status(401).send({
+        errores: [{ error: "No tienes permisos para modificar la comunidad" }],
+      });
+
+    //Comprobamos si el nuevo nombre de la comunidad ya existe
+    if (name && name !== community.name && await Community.findOne({ where: { name: name } })) {
+      return res.status(400).send({
+        errores: [{ error: `La comunidad con nombre ${name} ya existe` }],
+      });
+    }
+
+    //Todo OK, modificamos la comunidad
+    if(name)
+      community.name = name
+
+    if(description)
+      community.description = description
+
+    community.save()
+
+    return res.status(200).send({
+      community  
+    })
   },
 };
