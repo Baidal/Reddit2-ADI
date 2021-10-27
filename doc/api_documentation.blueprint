@@ -470,6 +470,66 @@ Se obtienen los datos de un post, junto con sus comentarios.
             ]
         }
 
+## Votado de posts [/api/post/{post_id}/voto]
+
++ Parameters
+    + post_id: 1 (number) - Id del post a votar
+
+### Voto de un post [POST]
+Un usuario puede votar un post de forma positiva o negativa. El valor de voto de un post 
+dependerá del baremo de sus votos positivos y negativos. Es decir, si tiene 14 votos positivos
+y 4 negativos, su valor de voto será de 10.
+
++ value (number): El valor de voto será -1 o 1, lo que indicará si es negativo o positivo. Cualquier otro valor
+                  será incorrecto.
+
++ Request
+    + Headers
+
+            Authorization: Bearer token
+
+    + Body
+
+            {
+                "value": -1, 1
+            }
+
++ Response 201 (application/json)
+
+        {
+            "post": {
+                "id": 1,
+                "title": "Primer post",
+                "text": "Sisisisisi",
+                "url_image": null,
+                "votes": 1,
+                "createdAt": "2021-10-20T15:42:43.752Z",
+                "updatedAt": "2021-10-27T07:50:57.535Z",
+                "UserId": 1,
+                "CommunityId": 1
+            }
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "No se ha encontrado el post con id 3132"
+                }
+            ]
+        }
+
++ Response 400 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "El valor no es correcto"
+                }
+            ]
+        }
+
 ## Eliminación de posts [/api/post/{post_id}]
 
 + Parameters
@@ -499,3 +559,153 @@ Se elimina un post y toda la información relacionada a él (comentarios y subco
                 }
             ]
         }
+
+# Group Comments
+Grupo que permite crear, eliminar y votar los comentarios que tendrán los posts de la aplicación.
+
+## Creación de comentarios [/api/post/{post_id}/comentario]
+
++ Parameters
+    + post_id: 1 (number) - Identificador del post en el que se va a crear el comentario.
+
+### Creación de un comentario [POST]
+
++ text (string) - Texto del comentario.
++ commentId (optional, number) - Este atributo se utiliza para indicar si el comentario es un subcomentario de otro comentario. Si lo
+                                 es, se indica el id, si no, este no se añade o se indica como -1.
+
++ Request 
+
+    + Headers
+
+            Authorization: Bearer token
+
+    + Body
+
+            {
+                "text": "Comentario test",
+                "commentId":-1
+            }
+
++ Response 201 (application/json)
+
+            {
+                "new_comment": {
+                    "votes": 0,
+                    "id": 18,
+                    "UserId": 4,
+                    "text": "Comentario test",
+                    "is_subComment": false,
+                    "PostId": 1,
+                    "updatedAt": "2021-10-27T08:02:47.648Z",
+                    "createdAt": "2021-10-27T08:02:47.648Z"
+                }
+            }
+
++ Response 404 (application/json)
+
+            {
+                "errores": [
+                    {
+                        "error": "No se ha encontrado el post con id 202"
+                    }
+                ]
+            }
+
++ Response 400 (application/json)
+
+            {
+                "errores": [
+                    {
+                        "error": "No se ha introducido el texto del comentario"
+                    }
+                ]
+            }
+
+## Votado de comentarios [/api/comment/{comment_id}/voto]
+Se permite a los usuarios votar los comentarios, de la misma forma que se hace en los posts.
+
++ Parameters
+    + comment_id: 1 (number) - Id del comentario a votar.
+
+### Votado de un comentario [POST]
+
++ value (number) - Valor del voto. Este debe ser -1 o 1 obligatoriamente.
+
++ Request
+
+    + Headers
+
+            Application: Bearer token
+
+    + Body 
+
+            {
+                "value": 1, -1
+            }
+
++ Response 201 (application/json)
+
+        {
+            "commentToVote": {
+                "id": 21,
+                "text": "Comentario test",
+                "votes": 1,
+                "is_subComment": false,
+                "createdAt": "2021-10-27T08:09:26.565Z",
+                "updatedAt": "2021-10-27T08:09:33.012Z",
+                "UserId": 4,
+                "PostId": 1
+            }
+        }
+
++ Response 400 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "No se ha introducido el valor del comentario"
+                }
+            ]
+        }
+
++ Response 404 (application/json)
+
+        {
+            "errores": [
+                {
+                    "error": "No se ha encontrado el comentario con id 1"
+                }
+            ]
+        }
+
+## Eliminación de comentarios [/api/comentario/{comment_id}]
+Eliminar un comentario eliminará el comentario y todos sus subcomentarios.
+
++ Parameters
+    + comment_id: 1 (number) - Identificador del comentario a eliminar.
+
+
+### Eliminación de un comentario [DELETE]
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer token
+
++ Response 200 (application/json)
+ 
+            {
+                "Estado": "Comentario y subcomentarios eliminados con éxito"
+            }
+
++ Response 404 (application/json)
+
+            {
+                "errores": [
+                    {
+                        "error": "No se ha encontrado el comentario con id 1"
+                    }
+                ]
+            }
