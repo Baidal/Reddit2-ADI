@@ -16,7 +16,7 @@
             <div class="flex flex-col justify-between ml-2">
                 <p>Baidal17</p>
                 <p>17 Comunidades </p>
-                <a href="ada" class="hover:bg-gray-700 rounded-md">Cerrar sesión</a>
+                <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md">Cerrar sesión</button>
             </div>
         </div>
         </a>
@@ -38,8 +38,10 @@ import {SearchIcon} from '@heroicons/vue/outline'
 export default {
     name: 'NavBar',
     components: {SearchIcon},
-    setup() {
-        
-    },
+    methods: {
+        logout() {
+            this.$store.dispatch('auth/logout')
+        }
+    }
 }
 </script>
