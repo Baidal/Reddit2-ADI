@@ -8,4 +8,5 @@ module.exports = (app) => {
     require('./Community')(app)
     require('./Post')(app)
     require('./Comment')(app)
+    require('./User')(app)
 }
