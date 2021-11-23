@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col items-center justify-center h-screen select-none">
-        <div class="flex flex-col -mt-32 bg-white px-8 py-8 rounded-xl shadow-2xl  w-full max-w-md border-l-4 border-purple-600">
-            <div class="font-medium self-center text-base uppercase w-60 text-center bg-purple-600 shadow-2xl p-6 rounded-full text-white">
+    <div class="flex flex-col items-center justify-items-start h-screen select-none">
+        <div class="flex flex-col mt-14 bg-white px-8 py-8 rounded-xl shadow-2xl  w-full max-w-md border-l-4 border-gray-300">
+            <div class="font-medium self-center text-base uppercase w-60 text-center bg-gray-600 shadow-2xl p-6 rounded-full text-white">
                 Iniciar sesión
             </div>
             <div class="mt-10">
@@ -28,7 +28,7 @@
                     </div>
                     <div class="text-center mt-6">
                         <button 
-                            class="p-3 rounded-lg bg-purple-600 outline-none text-white shadow w-32 justify-center focus:bg-purple-700 hover:bg-purple-500"
+                            class="p-3 rounded-lg bg-gray-600 outline-none text-white shadow w-32 justify-center focus:bg-purple-700 hover:bg-purple-500"
                         >
                             Iniciar sesión
                         </button>

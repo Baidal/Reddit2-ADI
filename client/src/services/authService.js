@@ -30,6 +30,6 @@ export default {
             descripcion: userData.descripcion,
         };
 
-        return axios.post(register, payLoad).then((resp) => resp.data);
+        return axios.post(register, payLoad).then((resp) => resp.data).catch((err) => err.response.data);
     },
 };
