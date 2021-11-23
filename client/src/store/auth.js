@@ -62,10 +62,11 @@ export default {
             return state.loggedIn
         },
         getUser(state){
-            return state.user.user
+            console.log(state)
+            return state.actualUser.user
         },
         getUserToken(state){
-            return state.user.token
+            return state.actualUser.token
         }
     }
 };

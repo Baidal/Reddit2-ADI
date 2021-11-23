@@ -1,6 +1,6 @@
 <template>
   <div id="nav">
-    <NavBar/>
+    <NavBar :user="getUser"/>
     <router-link to="/">Home</router-link> |
     <router-link to="/login">Login</router-link>
   </div>
@@ -13,6 +13,11 @@ export default {
   name: 'App',
   components: {
     NavBar
+  },
+  computed: {
+    getUser(){
+      return this.$store.state.auth.actualUser?.user
+    }
   }
 }
 </script>
