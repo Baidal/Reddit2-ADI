@@ -1,4 +1,7 @@
 const User = require("../models").User;
+const Community = require('../models').Community
+const Sequelize = require('../models').Sequelize
+
 const jwt = require("jwt-simple");
 const jwtConfig = require("../config/jwtConf");
 const internalError = require('../utils/internalError')
@@ -88,7 +91,7 @@ module.exports = {
             {email: nickEmail},
             {nick: nickEmail}
           ]
-        },
+        }
       });
 
       //Encontramos al usuario
@@ -96,6 +99,8 @@ module.exports = {
         //el usuario ha introducido la contraseña correcta
         if(await comparePasswords(password, user.password)) {
           const token = jwt.encode(user, jwtConfig.SECRET)
+          user.dataValues.numCommunities = await user.countCommunities()
+
           res.status(200).send({
             user,
             token

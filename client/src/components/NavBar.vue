@@ -16,7 +16,7 @@
                     <img src="https://pbs.twimg.com/profile_images/1143183093160980481/cKqlEov2_normal.jpg" class="rounded-full max-h-13 max-w-13 my-auto">
                     <div class="flex flex-col justify-between ml-2">
                         <p class="text-center">{{user.nick}}</p>
-                        <p class="text-center">17 Comunidades </p>
+                        <p class="text-center">{{generateCommunityNumberString()}}</p>
                         <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md">Cerrar sesión</button>
                     </div>
                 </div>
@@ -43,6 +43,15 @@ export default {
     methods: {
         logout() {
             this.$store.dispatch('auth/logout')
+        },
+        generateCommunityNumberString() {
+            if(this.user.numCommunities == 0)
+                return "Ninguna comunidad"
+            
+            if(this.user.numCommunities == 1)
+                return "1 Comunidad"
+            
+            return this.user.numCommunities + " Comunidades"
         }
     },
     props: {
