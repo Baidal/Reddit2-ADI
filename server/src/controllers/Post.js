@@ -114,7 +114,7 @@ module.exports = {
        */
       if (req.files && req.files.postImage) {
         const postImage = req.files.postImage;
-
+        console.log("hola")
         let urlImage = "";
         const absolutePath = process.cwd();
         const relativePath =
