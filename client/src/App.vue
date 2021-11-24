@@ -1,8 +1,10 @@
 <template>
   <div id="nav">
     <NavBar :user="getUser"/>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/login">Login</router-link>
+    <router-link to="/" class="mr-2">Home</router-link> |
+    <router-link to="/login" class="mr-2">Login</router-link>
+    <router-link to="/register" class="mr-2">Register</router-link>
+
   </div>
   <router-view/>
 </template>

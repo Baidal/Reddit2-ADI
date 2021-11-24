@@ -28,7 +28,7 @@
                     </div>
                     <div class="text-center mt-6">
                         <button 
-                            class="p-3 rounded-lg bg-gray-600 outline-none text-white shadow w-32 justify-center focus:bg-purple-700 hover:bg-purple-500"
+                            class="p-3 rounded-lg bg-gray-600 outline-none text-white shadow w-32 justify-center focus:bg-gray-400 hover:bg-gray-400"
                         >
                             Iniciar sesión
                         </button>

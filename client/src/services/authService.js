@@ -27,7 +27,7 @@ export default {
             email: userData.email,
             password: userData.password,
             nick: userData.nick,
-            descripcion: userData.descripcion,
+            description: userData.descripcion,
         };
 
         return axios.post(register, payLoad).then((resp) => resp.data).catch((err) => err.response.data);
