@@ -1,12 +1,11 @@
 <template>
-  <div id="nav">
+  <div id="nav" class="block">
     <NavBar :user="getUser"/>
-    <router-link to="/" class="mr-2">Home</router-link> |
-    <router-link to="/login" class="mr-2">Login</router-link>
-    <router-link to="/register" class="mr-2">Register</router-link>
 
   </div>
-  <router-view/>
+  <div class="mt-36">
+    <router-view/>
+  </div>
 </template>
 
 <script>
@@ -26,6 +25,6 @@ export default {
 
 <style>
 body{
-  background-color: #4B5563;
+  background-color: #030303;
 }
 </style>

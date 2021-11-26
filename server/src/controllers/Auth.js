@@ -1,6 +1,5 @@
 const User = require("../models").User;
 const Community = require('../models').Community
-const Sequelize = require('../models').Sequelize
 
 const jwt = require("jwt-simple");
 const jwtConfig = require("../config/jwtConf");
@@ -61,6 +60,8 @@ module.exports = {
 
         })
       }
+
+      relativePath = relativePath.substring(7, relativePath.length);
 
       const new_user = await User.create({...req.body, url_image: relativePath});
       res.status(201).send({ new_user });

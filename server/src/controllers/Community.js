@@ -3,7 +3,9 @@ const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
 const User = require("../models").User;
+
 const internalError = require("../utils/internalError");
+const paginator = require('../utils/paginator')
 
 module.exports = {
   async createCommunity(req, res) {
@@ -44,14 +46,7 @@ module.exports = {
       let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
       let limit = req.query.limit;
 
-      /**
-       * Nos aseguramos de que se hayan introducido los valores en la url
-       */
-      offset = offset ? offset : 0;
-      limit = limit ? limit : 10;
-
-      limit = limit > 10 ? 10 : limit; //comprobamos que el limite no supere los 20 casos
-      offset = limit * offset;
+      [offset, limit] = paginator(offset, limit, 10)
 
       const community = await Community.findOne({
         where: { name: name },

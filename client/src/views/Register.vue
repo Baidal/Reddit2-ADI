@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col items-center justify-items-start h-screen select-none">
-        <div class="flex flex-col mt-10 bg-white px-8 py-8 rounded-xl shadow-2xl  w-full max-w-4xl border-l-4 border-gray-300">
-            <div class="font-medium self-center text-base uppercase w-60 text-center bg-gray-600 shadow-2xl p-4 rounded-full text-white">
+        <div class="flex flex-col bg-light-grey px-8 py-8 rounded-xl shadow  w-full max-w-4xl border-l-4 border-gray-300">
+            <div class="font-medium self-center text-base uppercase w-60 text-center bg-white-gray shadow-2xl p-4 rounded-2xl text-black">
                 Registro
             </div>
             <div class="mt-10">
@@ -9,11 +9,11 @@
                     <div class="flex justify-center">
                         <div class="relative w-1/2 mb-3 mx-3.5">
                             <label for="nick" class="text-red-600 font-light">*</label>
-                            <label for="nick" class="text-gray-700 font-light"> Nick</label> 
+                            <label for="nick" class="text-gray-300 font-light"> Nick</label> 
                             <input
                             v-model="nick.actualNick"
                                 name="nick" 
-                                class="border-0 p-4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" 
+                                class="border-0 p-4 placeholder-gray-400 text-gray-500 bg-dark-grey rounded text-sm shadow focus:outline-none focus:ring w-full" 
                                 placeholder="Nick..." 
                                 style="transition: all 0.15s ease 0s;" />
                             <label for="nombre" class="text-red-600 font-thin" v-if="nick.errorNick">*{{nick.errorNick}}</label>
@@ -23,12 +23,12 @@
                     <div class="flex justify-center">
                         <div class="w-1/2 mb-3 mx-3.5">
                             <label for="email" class="text-red-600 font-light">*</label>
-                            <label for="email" class="text-gray-700 font-light"> Email</label> 
+                            <label for="email" class="text-gray-300 font-light"> Email</label> 
                             <input
                                 v-model="email.actualEmail"
                                 name="email"
                                 type="email" 
-                                class="border-0 p-4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" 
+                                class="border-0 p-4 placeholder-gray-400 text-gray-500 bg-dark-grey rounded text-sm shadow focus:outline-none focus:ring w-full" 
                                 placeholder="Email..." 
                                 style="transition: all 0.15s ease 0s;" />
                             <label for="email" class="text-red-600 font-thin" v-if="email.errorEmail">*{{email.errorEmail}}</label>
@@ -38,12 +38,12 @@
                     <div class="flex justify-center">
                         <div class="w-2/4 mb-3 mx-3.5">
                             <label for="password" class="text-red-600 font-light">*</label>
-                            <label for="password" class="text-gray-700 font-light"> Contraseña</label> 
+                            <label for="password" class="text-gray-300 font-light"> Contraseña</label> 
                             <input
                                 v-model="password.actualPassword"
                                 name="password"
                                 type="password"
-                                class="border-0 p-4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" 
+                                class="border-0 p-4 placeholder-gray-400 text-gray-500 bg-dark-grey rounded text-sm shadow focus:outline-none focus:ring w-full" 
                                 placeholder="Contraseña..." 
                                 style="transition: all 0.15s ease 0s;" />
                             <label for="email" class="text-red-600 font-thin" v-if="password.errorPassword">*{{password.errorPassword}}</label>
@@ -52,30 +52,30 @@
                     <div class="flex justify-center">
                         <div class="w-2/4 mb-3 mx-3.5">
                             <label for="password-repeat" class="text-red-600 font-light">*</label>
-                            <label for="password-repeat" class="text-gray-700 font-light"> Repite contraseña</label> 
+                            <label for="password-repeat" class="text-gray-300 font-light"> Repite contraseña</label> 
                             <input
                                 v-model="repeatedPassword.actualRepeatedPassword"
                                 type="password"
                                 name="password-repeat"
-                                class="border-0 p-4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" 
+                                class="border-0 p-4 placeholder-gray-400 text-gray-500 bg-dark-grey rounded text-sm shadow focus:outline-none focus:ring w-full" 
                                 placeholder="Contraseña..." 
                                 style="transition: all 0.15s ease 0s;" />
                         </div>
                     </div>
                     <div class="flex justify-center">
                         <div class="w-1/2 mb-3 mx-3.5">
-                            <label for="password" class="text-gray-700 font-light"> Descripción</label> 
+                            <label for="password" class="text-gray-300 font-light"> Descripción</label> 
                             <textarea
                                 v-model="description"
                                 name="description"
-                                class="border-0 p-4 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full" 
+                                class="border-0 p-4 placeholder-gray-400 text-gray-500 bg-dark-grey rounded text-sm shadow focus:outline-none focus:ring w-full" 
                                 placeholder="Descripción..." 
                                 style="transition: all 0.15s ease 0s;" ></textarea>
                         </div>
                     </div>
                     <div class="text-center mt-12">
                         <button 
-                            class="p-3 rounded-lg bg-purple-600 outline-none text-white shadow w-32 justify-center focus:bg-purple-700 hover:bg-purple-500"
+                            class="p-3 rounded-lg bg-blue-400 outline-none text-white shadow w-32 justify-center hover:bg-gray-300 hover:text-black"
                         >
                             Iniciar sesión
                         </button>

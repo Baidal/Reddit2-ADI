@@ -5,8 +5,9 @@ const Comment = require("../models").Comment;
 const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
-const sequelize = require("../models").sequelize;
+const Sequelize = require('../models').Sequelize
 
+const paginator = require("../utils/paginator");
 const valueIsOk = require("../utils/valueChecker");
 const internalError = require("../utils/internalError");
 
@@ -17,14 +18,7 @@ module.exports = {
       let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
       let limit = req.query.limit;
 
-      /**
-       * Nos aseguramos de que se hayan introducido los valores en la url
-       */
-      offset = offset ? offset : 0;
-      limit = limit ? limit : 20;
-
-      limit = limit > 20 ? 20 : limit; //comprobamos que el limite no supere los 20 casos
-      offset = limit * offset;
+      [offset, limit] = paginator(offset, limit, 20);
 
       const post = await Post.findOne({
         where: { id: id },
@@ -67,6 +61,49 @@ module.exports = {
       res.send({ post });
     } catch (e) {
       internalError(res, e, "getPost", "Post");
+    }
+  },
+  async getPosts(req, res) {
+    try {
+      let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
+      let limit = req.query.limit;
+
+      [offset, limit] = paginator(offset, limit, 10);
+
+      res.status(200).send(
+        await Post.findAll({
+          limit,
+          offset,
+          order: [["createdAt", "DESC"]],
+          attributes: {
+            include: [
+              [
+                Sequelize.fn(
+                  "COUNT",
+                  Sequelize.col("Comments.id")
+                ),
+                "numComments",
+              ],
+            ],
+          },
+          include: [
+            {
+              model: Comment,
+              attributes: [],
+            },
+          ]
+        })
+      );
+
+//       SELECT "Posts".*, COUNT("Comments"."id") as "numComments", "Communities"."name" as CommunityName, "Users"."nick" as "userNick"
+// FROM "Posts"
+// LEFT OUTER JOIN "Comments" AS "Comments" ON "Posts"."id" = "Comments"."PostId"
+// LEFT OUTER JOIN "Communities" ON "Posts"."CommunityId" = "Communities"."id"
+// LEFT OUTER JOIN "Users" ON "Posts"."UserId" = "Users"."id"
+// GROUP BY "Posts"."id", "Comments"."id", "Communities"."name", "Users"."nick"
+// ORDER BY "Posts"."createdAt" DESC
+    } catch (e) {
+      internalError(res, e, "getPosts", "Post");
     }
   },
   async createPost(req, res) {
@@ -114,7 +151,7 @@ module.exports = {
        */
       if (req.files && req.files.postImage) {
         const postImage = req.files.postImage;
-        console.log("hola")
+        console.log("hola");
         let urlImage = "";
         const absolutePath = process.cwd();
         const relativePath =
@@ -129,7 +166,7 @@ module.exports = {
           if (err) return internalError(res, err, "uploadFile", "Post");
         });
 
-        post_data.url_image = relativePath;
+        post_data.url_image = relativePath.substring(7, relativePath.length); //extraemos /public/ del string
       }
 
       const new_post = await Post.create(post_data);
