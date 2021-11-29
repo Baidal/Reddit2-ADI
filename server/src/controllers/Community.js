@@ -3,6 +3,7 @@ const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
 const User = require("../models").User;
+const {Op} = require('sequelize')
 
 const internalError = require("../utils/internalError");
 const paginator = require('../utils/paginator')
@@ -117,6 +118,42 @@ module.exports = {
       res.status(200).send(community);
     } catch (e) {
       internalError(res, e, "getCommunity", "Community");
+    }
+  },
+  async searchCommunity(req, res) {
+    const name = req.params.name
+    let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
+    let limit = req.query.limit;
+
+    [offset, limit] = paginator(offset, limit, 5)
+
+    const response = await Community.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`
+        }
+      }
+    })
+
+    res.status(200).send(response)
+  }
+  ,
+  async getCommunities(req, res) {
+    try{
+      let offset = req.query.page - 1; //Si estamos en la página 1, el offset será de 0 (no nos saltamos ningun comentario)
+      let limit = req.query.limit;
+
+      [offset, limit] = paginator(offset, limit, 5)
+      
+      const response = await Community.findAll({
+        offset,
+        limit,
+        order: [["name", "ASC"]],
+      })
+
+      res.status(200).send(response)
+    }catch(e) {
+      internalError(res, e, "getCommunities", "Community")
     }
   },
   async followCommunity(req, res) {

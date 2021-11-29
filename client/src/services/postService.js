@@ -5,9 +5,7 @@ import getUserToken from "./getUserToken";
 const url_user_posts = urls.USUARIO_API + "/comunidades/posts"
 const url_posts = urls.DEFAULT_API + "posts"
 
-function getPaginationUrlString(offset, limit){
-    return `?page=${offset}&limit=${limit}`
-}
+import {getPaginationUrlString} from '../utils/utils'
 
 export default {
     async getPosts(offset, limit){

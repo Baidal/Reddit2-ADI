@@ -5,7 +5,8 @@ const Comment = require("../models").Comment;
 const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
-const Sequelize = require('../models').Sequelize
+const sequelize = require('../models').sequelize
+const { QueryTypes } = require("sequelize");
 
 const paginator = require("../utils/paginator");
 const valueIsOk = require("../utils/valueChecker");
@@ -70,38 +71,27 @@ module.exports = {
 
       [offset, limit] = paginator(offset, limit, 10);
 
-      res.status(200).send(
-        await Post.findAll({
-          limit,
-          offset,
-          order: [["createdAt", "DESC"]],
-          attributes: {
-            include: [
-              [
-                Sequelize.fn(
-                  "COUNT",
-                  Sequelize.col("Comments.id")
-                ),
-                "numComments",
-              ],
-            ],
-          },
-          include: [
-            {
-              model: Comment,
-              attributes: [],
-            },
-          ]
+      const query = await sequelize.query(`
+        SELECT "Posts".*, COUNT("Comments"."id") as "numComments", "Communities"."name" as CommunityName, "Users"."nick" as "userNick"
+        FROM "Posts"
+          LEFT OUTER JOIN "Comments" AS "Comments" ON "Posts"."id" = "Comments"."PostId"
+          LEFT OUTER JOIN "Communities" ON "Posts"."CommunityId" = "Communities"."id"
+          LEFT OUTER JOIN "Users" ON "Posts"."UserId" = "Users"."id"
+        GROUP BY "Posts"."id", "Comments"."id", "Communities"."name", "Users"."nick"
+        ORDER BY "Posts"."createdAt" DESC
+        OFFSET $offset
+        LIMIT $limit`,
+        {
+          type: QueryTypes.SELECT,
+          bind: {
+            offset,
+            limit
+          }
         })
-      );
 
-//       SELECT "Posts".*, COUNT("Comments"."id") as "numComments", "Communities"."name" as CommunityName, "Users"."nick" as "userNick"
-// FROM "Posts"
-// LEFT OUTER JOIN "Comments" AS "Comments" ON "Posts"."id" = "Comments"."PostId"
-// LEFT OUTER JOIN "Communities" ON "Posts"."CommunityId" = "Communities"."id"
-// LEFT OUTER JOIN "Users" ON "Posts"."UserId" = "Users"."id"
-// GROUP BY "Posts"."id", "Comments"."id", "Communities"."name", "Users"."nick"
-// ORDER BY "Posts"."createdAt" DESC
+      res.status(200).send(
+        query
+      );
     } catch (e) {
       internalError(res, e, "getPosts", "Post");
     }
