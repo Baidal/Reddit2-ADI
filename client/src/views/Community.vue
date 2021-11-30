@@ -1,0 +1,78 @@
+<template>
+    <!-- Cabecera de la comunidad-->
+    <div class="container mx-auto block sm:w-full md:w-4/5 lg:w-4/5 xl:w-4/5 2xl:w-8/12 min-height">   
+       <div class="space-x-2 flex justify-items-start">
+            <div class="my-auto">
+                <h1 class="text-left text-gray-400 text-3xl font-bold">{{this.name}}</h1>
+            </div>
+            <div class="my-auto">
+                <button class="py-1 px-3 rounded-full bg-gray-300 font-bold hover:bg-gray-400" v-on:click="followUnfollowCommunity">Unirme</button>
+            </div>
+       </div>
+        <h2 class="text-left text-gray-600 font-bold ">/r/{{this.name}}</h2>
+
+        <div class="block relative">
+            <!-- Información de la comunidad -->
+            <div class="border shadow border-gray-600 top-0 right-0 w-2/6 rounded-md text-center bg-light-grey text-gray-400 absolute">
+                <div class="mx-2">
+                    <h1 class="text-left font-bold text-gray-500 text-sm  mb-5">Información de la comunidad</h1>
+                    <p class="text-left text-gray-300 text-sm mb-2">{{this.community.description}}</p>
+                    <div class="flex text-gray-300 text-s">
+                        <p>{{this.community.numFollowers}} seguidores</p>
+                    </div>
+                    <div class="border-b border-gray-700 mx-1 my-2"/>
+                    <button class="py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3">Unirme</button>
+                </div>
+            </div>
+            <div class="w-4/6 ">
+                <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post"/>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import communityService from "../services/communityService"
+
+import PostCard from "../components/PostCard.vue"
+
+export default {
+    name: 'Community',
+    components: {
+        PostCard,
+    },
+    data(){
+        return {
+            name: this.$route.params.comName,
+            community: [],
+            postPage: 1,
+            postLimit: 15
+        }
+    },
+    async mounted(){
+        try{
+            this.community = await (await communityService.getCommunity(this.name, this.postPage, this.postLimit)).data
+        }catch(e){
+            this.$router.push({name: 'error', params: {error: `No se ha encontrado la comunidad ${this.name}`}})
+        }
+    
+    },
+    computed: {
+        loggedIn() {
+            return this.$store.getters['auth/userLoggedIn']
+        }
+    },
+    methods: {
+        async followUnfollowCommunity(){
+            if(!this.loggedIn){
+                this.$router.push({name: 'login'})
+            }
+        }
+    }
+}
+</script>
+<style scoped>
+.min-height {
+        min-height: 600px;
+    }
+</style>

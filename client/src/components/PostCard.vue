@@ -3,7 +3,7 @@
         <!-- Panel de la izquierda-->
         <div class="w-10  bg-medium-gray flex flex-col items-center text-white p-2">
             <button><ChevronUpIcon class="w-4 h-4"/></button>
-            <p class="my-1 text-sm">23.5k</p>
+            <p class="my-1 text-sm">{{this.post.votes}}</p>
             <button><ChevronDownIcon class="w-4 h-4 mb-3"/></button>
         </div>
         <!-- Contenido del post-->
@@ -18,7 +18,7 @@
             <!-- Footer del post-->
             <div class="flex text-gray-600 text-sm items-center ml-4 mb-2">
                 <ChatAltIcon class="w-4 h-4"/>
-                <p class="mr-4">2k Comentarios</p>
+                <p class="mr-4">{{this.post.numComments}} Comentarios</p>
                 <ShareIcon class="w-4 h-4"/>
                 <p class="mr-4">Compartir</p>
             </div>

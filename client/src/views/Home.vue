@@ -1,28 +1,25 @@
 <template>
-    <div class="container mx-auto block sm:w-full md:w-4/5 lg:w-3/5 xl:w-3/5 2xl:w-6/12 relative min-height">
+    <div class="container mx-auto block sm:w-full md:w-4/5 lg:w-4/5 xl:w-4/5 2xl:w-8/12 relative min-height">
         <!-- Buscador de comunidades -->
         <div class="border shadow border-gray-600 top-0 right-0 w-1/4 rounded-md text-center bg-light-grey text-gray-400 absolute">
             <h1 class="border-b border-gray-400 p-1">Comunidades destacadas</h1>
-            <div v-for="community in communities" :key="community.id" class="flex p-2 justify-center">
-                <div class="flex items-center">
-                    <ArrowCircleUpIcon class="w-4 h-4 mr-1 "/>
-                </div>
-                {{community.name}}
+            <div v-for="community in communities" :key="community.id">
+                <router-link :to="{name: 'community', params: {comName: community.name}}" class="flex p-2 justify-center">
+                    <div class="flex items-center">
+                        <ArrowCircleUpIcon class="w-4 h-4 mr-1 "/>
+                    </div>
+                    {{community.name}}
+                </router-link>
             </div>
-
             <div class="text-center mt-2">
                 <button v-if="!showLessCommunities" v-on:click="fetchMoreCommunities">Cargar más</button>
                 <button v-if="showLessCommunities" v-on:click="removeCommunities">Cargar menos</button>
 
             </div>
-            
         </div>
         <div class="w-3/4">
             <PostCard v-for="post in posts" :key="post.id" :post="post"/>
-
         </div>
-
-
         <h1>dsd</h1>
     </div >
 
