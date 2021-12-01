@@ -6,7 +6,7 @@
                 <h1 class="text-left text-gray-400 text-3xl font-bold">{{this.name}}</h1>
             </div>
             <div class="my-auto">
-                <button class="py-1 px-3 rounded-full bg-gray-300 font-bold hover:bg-gray-400" v-on:click="followUnfollowCommunity">Unirme</button>
+                <button class="py-1 px-3 rounded-full bg-gray-300 font-bold hover:bg-gray-400" v-on:click="followUnfollowCommunity">{{this.getFollowUnfollowButtonString()}}</button>
             </div>
        </div>
         <h2 class="text-left text-gray-600 font-bold ">/r/{{this.name}}</h2>
@@ -21,7 +21,7 @@
                         <p>{{this.community.numFollowers}} seguidores</p>
                     </div>
                     <div class="border-b border-gray-700 mx-1 my-2"/>
-                    <button class="py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3">Unirme</button>
+                    <button class="py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3" v-on:click="followUnfollowCommunity">{{this.getFollowUnfollowButtonString()}}</button>
                 </div>
             </div>
             <div class="w-4/6 ">
@@ -46,10 +46,12 @@ export default {
             name: this.$route.params.comName,
             community: [],
             postPage: 1,
-            postLimit: 15
+            postLimit: 15,
+            userFollowsCommunity: false
         }
     },
     async mounted(){
+        this.userFollowsCommunity = await communityService.userFollowsCommunity(this.name) 
         try{
             this.community = await (await communityService.getCommunity(this.name, this.postPage, this.postLimit)).data
         }catch(e){
@@ -66,7 +68,19 @@ export default {
         async followUnfollowCommunity(){
             if(!this.loggedIn){
                 this.$router.push({name: 'login'})
+                return
             }
+
+            
+            communityService.followUnfollowCommunity(this.name)
+            this.userFollowsCommunity = !this.userFollowsCommunity
+            
+        },
+        getFollowUnfollowButtonString(){
+            if(this.userFollowsCommunity)
+                return 'Dejar de seguir'
+            
+            return 'Seguir' 
         }
     }
 }

@@ -3,7 +3,7 @@ const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
 const User = require("../models").User;
-const {Op} = require('sequelize')
+const {Op, where} = require('sequelize')
 
 const internalError = require("../utils/internalError");
 const paginator = require('../utils/paginator')
@@ -136,6 +136,29 @@ module.exports = {
     })
 
     res.status(200).send(response)
+  },
+  async userFollowsCommunity(req, res){
+    try{
+      const comName = req.params.name
+
+      const community = await Community.findOne({
+        where: {name: comName}
+      })
+
+      if(!community)
+        return res.status(404).send({
+          errores: [{error: `No se ha encontrado la comunidad ${name}`}]
+        })
+
+      const response = await community.hasUserFollowsCommunity(res.locals.user.id)
+
+      res.status(200).send({
+        siguiendo: response
+      })
+      
+    }catch(e){
+      internalError(res, e, "userFollowsCommunity", "Community")
+    }
   }
   ,
   async getCommunities(req, res) {
