@@ -21,8 +21,13 @@ export default {
         })
     },
     async userFollowsCommunity(communityName){
+        const TOKEN =  getUserToken()
+        
+        if(!TOKEN)
+            return false
+        
         return (await axios.get(comunidadUrl + `/${communityName}/usuario`, {
-            headers: getUserToken()
+            headers: TOKEN
         })).data.siguiendo
     }
 }

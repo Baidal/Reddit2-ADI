@@ -18,14 +18,17 @@
                     <h1 class="text-left font-bold text-gray-500 text-sm  mb-5">Información de la comunidad</h1>
                     <p class="text-left text-gray-300 text-sm mb-2">{{this.community.description}}</p>
                     <div class="flex text-gray-300 text-s">
-                        <p>{{this.community.numFollowers}} seguidores</p>
+                        <p>{{this.getNumFollowersString}}</p>
                     </div>
                     <div class="border-b border-gray-700 mx-1 my-2"/>
                     <button class="py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3" v-on:click="followUnfollowCommunity">{{this.getFollowUnfollowButtonString()}}</button>
                 </div>
             </div>
-            <div class="w-4/6 ">
+            <div class="w-4/6" v-if="this.community.Posts?.length !== 0">
                 <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post"/>
+            </div>
+            <div v-else class="flex text-white">
+                <h1>Esta comunidad aún no cuenta con ningún post. </h1><p> Sé el primero en postear!</p>
             </div>
         </div>
     </div>
@@ -52,8 +55,10 @@ export default {
     },
     async mounted(){
         this.userFollowsCommunity = await communityService.userFollowsCommunity(this.name) 
+        
         try{
             this.community = await (await communityService.getCommunity(this.name, this.postPage, this.postLimit)).data
+            console.log(this.community.Posts.length)
         }catch(e){
             this.$router.push({name: 'error', params: {error: `No se ha encontrado la comunidad ${this.name}`}})
         }
@@ -62,6 +67,15 @@ export default {
     computed: {
         loggedIn() {
             return this.$store.getters['auth/userLoggedIn']
+        },
+        
+        getNumFollowersString(){
+            if(!this.community.numFollowers)
+                return '0 seguidores'
+            else if(this.community.numFollowers == 1)
+                return '1 seguidor'
+            
+            return this.community.numFollowers + ' seguidores'
         }
     },
     methods: {
@@ -74,7 +88,8 @@ export default {
             
             communityService.followUnfollowCommunity(this.name)
             this.userFollowsCommunity = !this.userFollowsCommunity
-            
+            this.community.numFollowers++
+
         },
         getFollowUnfollowButtonString(){
             if(this.userFollowsCommunity)

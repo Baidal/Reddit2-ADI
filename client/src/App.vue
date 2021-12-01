@@ -3,7 +3,7 @@
     <NavBar :user="getUser"/>
 
   </div>
-  <div class="mt-36">
+  <div class="mt-44">
     <router-view/>
   </div>
 </template>

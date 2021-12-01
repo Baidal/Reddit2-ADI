@@ -17,8 +17,8 @@
         <div v-if="user">
             <a href="perfil">
                 <div class="flex border-2 border-gray-700 p-2 px-7 rounded-lg relative" v-if="user">
-                    <img v-bind:src="getProfileUrl()" class="rounded-full max-h-13 max-w-13 my-auto w-16 h-16">
-                    <div class="flex flex-col justify-between ml-2">
+                    <img v-bind:src="getProfileUrl()" class="rounded-full max-h-8 max-w-8 my-auto w-8 h-8">
+                    <div class="flex justify-center items-center ml-2 space-x-4">
                         <p class="text-center">{{user.nick}}</p>
                         <p class="text-center">{{generateCommunityNumberString()}}</p>
                         <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md">Cerrar sesión</button>
