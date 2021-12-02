@@ -17,8 +17,11 @@
 
             </div>
         </div>
-        <div class="w-3/4">
+        <div class="w-3/4" v-if="this.posts?.length !== 0">
             <PostCard v-for="post in posts" :key="post.id" :post="post"/>
+        </div>
+        <div class="w-3/4 flex text-white" v-else>
+            <h1>Parece que aún no sigues a ninguna comunidad...</h1>
         </div>
         <h1>dsd</h1>
     </div >

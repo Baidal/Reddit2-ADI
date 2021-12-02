@@ -58,7 +58,6 @@ export default {
         
         try{
             this.community = await (await communityService.getCommunity(this.name, this.postPage, this.postLimit)).data
-            console.log(this.community.Posts.length)
         }catch(e){
             this.$router.push({name: 'error', params: {error: `No se ha encontrado la comunidad ${this.name}`}})
         }
@@ -87,8 +86,14 @@ export default {
 
             
             communityService.followUnfollowCommunity(this.name)
+            
+            if(this.userFollowsCommunity)
+                this.community.numFollowers--
+            else
+                this.community.numFollowers++
+            
             this.userFollowsCommunity = !this.userFollowsCommunity
-            this.community.numFollowers++
+            
 
         },
         getFollowUnfollowButtonString(){

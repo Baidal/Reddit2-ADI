@@ -21,7 +21,10 @@
                     <div class="flex justify-center items-center ml-2 space-x-4">
                         <p class="text-center">{{user.nick}}</p>
                         <p class="text-center">{{generateCommunityNumberString()}}</p>
-                        <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md">Cerrar sesión</button>
+                        <router-link :to="{name: 'newCommunity'}" class="hover:bg-gray-700 rounded-md p-1">
+                            Nueva comunidad
+                        </router-link>
+                        <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md p-1">Cerrar sesión</button>
                     </div>
                 </div>
             </a>
