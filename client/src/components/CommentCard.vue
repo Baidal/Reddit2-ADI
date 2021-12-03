@@ -8,7 +8,7 @@
 export default {
     name: 'CommentCard',
     props: {
-        comment: {}
+        comment: {},
     }
 }
 </script>
