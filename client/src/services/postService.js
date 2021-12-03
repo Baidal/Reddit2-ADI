@@ -5,10 +5,14 @@ import getUserToken from "./getUserToken";
 const url_user_posts = urls.USUARIO_API + "/comunidades/posts"
 const url_posts = urls.DEFAULT_API + "posts"
 const url_newPost = urls.COMUNIDAD_API
+const url_post = urls.POST_API
 
 import {getPaginationUrlString} from '../utils/utils'
 
 export default {
+    getPost(postId, offset, limit){
+        return axios.get(`${url_post}/${postId}` + getPaginationUrlString(offset, limit))
+    },
     async getPosts(offset, limit){
         
         const TOKEN = getUserToken()

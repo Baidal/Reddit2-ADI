@@ -3,8 +3,8 @@
         <div class="w-1/2 text-center space-y-6 flex justify-center flex-col items-center">
             <h1 class="text-gray-400 text-3xl font-bold">Nuevo post</h1>
             <p class="text-gray-400 bg-medium-gray rounded-md w-2/5 text-center border border-light-grey">/r/{{this.comName}}</p>
-            <input v-model="this.postTitle" class="w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 rounded-sm" placeholder=" Título del post..."/>
-            <textarea v-model="this.postText" class="w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 h-40 rounded-sm" placeholder=" Texto del post..."></textarea>
+            <input v-model="this.postTitle" class="box-border pl-4 w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 rounded-sm" placeholder="Título del post..."/>
+            <textarea v-model="this.postText" class="box-border pl-4 pt-2 w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 h-40 rounded-sm" placeholder="Texto del post..."></textarea>
             <div class="z-10 cursor-pointer w-3/4 border border-gray-600 bg-light-grey rounded-xl outline-gray text-gray-500 text-center relative h-12">
                 <input type="file" accept="image/*" @change="handleFileChange($event.target.files)" class="opacity-0 absolute top-0 left-0 w-full h-12 z-0 cursor-pointer">
                 <p v-if="fileName" class="mt-3 flex justify-center items-center">{{fileName}}</p> 

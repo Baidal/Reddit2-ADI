@@ -7,6 +7,7 @@ import Community from '../views/Community.vue'
 import Error from '../views/Error.vue'
 import NewCommunity from '../views/NewCommunity.vue'
 import NewPost from '../views/NewPost.vue'
+import Post from '../views/Post.vue'
 
 const routes = [
   {
@@ -31,6 +32,11 @@ const routes = [
     component: Register
   },
   {
+    path: '/r/post/:id',
+    name: 'post',
+    component: Post
+  },
+  {
     path: '/r/:comName',
     name: 'community',
     component: Community
@@ -49,7 +55,8 @@ const routes = [
     path: '/r/:comName/post/new',
     name: 'newPost',
     component: NewPost
-  }
+  },
+  
 ]
 
 const router = createRouter({

@@ -7,7 +7,7 @@
             <button><ChevronDownIcon class="w-4 h-4 mb-3"/></button>
         </div>
         <!-- Contenido del post-->
-        <div class="block text-left text-white-gray bg-dark-grey w-full">
+        <router-link class="block text-left text-white-gray bg-dark-grey w-full" :to="{name: 'post', params: {id: this.post.id}}">
             <div class="m-2">
                 <!-- Datos del post-->
                 <h1 class="text-lg font-bold">{{this.post.title}}</h1>
@@ -22,7 +22,7 @@
                 <ShareIcon class="w-4 h-4"/>
                 <p class="mr-4">Compartir</p>
             </div>
-        </div>
+        </router-link>
     </div>
     
 </template>

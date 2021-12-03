@@ -2,8 +2,8 @@
     <form @submit.prevent="handleNewCommunitySubmit" class="flex justify-center">
         <div class="w-1/2 text-center space-y-6">
             <h1 class="text-gray-400 text-3xl font-bold">Nueva comunidad</h1>
-            <input  v-model="this.comName" class="w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 rounded-sm" placeholder=" Nombre de la comunidad..."/>
-            <textarea v-model="this.comDescription" class="w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 h-40 rounded-sm" placeholder=" Descripción..."></textarea>
+            <input  v-model="this.comName" class="box-border pl-4 w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 rounded-sm" placeholder="Nombre de la comunidad..."/>
+            <textarea v-model="this.comDescription" class="box-border pl-4 pt-2 w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 h-40 rounded-sm" placeholder="Descripción..."></textarea>
             <p class="text-gray-500 text-sm font-bold">/r/{{this.comName}}</p>
             <p v-for="error in errors" :key="error" class="text-xs text-red-600">* {{error}}</p>
             
