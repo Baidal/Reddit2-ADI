@@ -1,5 +1,5 @@
 <template>
-    <form class="flex justify-center">
+    <form @submit.prevent="handleNewDescriptionSubmit" class="flex justify-center">
         <div class="w-1/2 text-center space-y-6">
             <h1 class="text-gray-400 text-3xl font-bold">Nueva comunidad</h1>
             <input  v-model="this.comName" class="w-3/4 border border-gray-600 bg-light-grey text-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-600 rounded-sm" placeholder=" Nombre de la comunidad..."/>
@@ -13,6 +13,9 @@
 </template>
 
 <script>
+
+import communityService from "../services/communityService";
+
 export default {
     name: "New community",
     data(){
@@ -32,13 +35,25 @@ export default {
             this.$router.push("/")
     },
     methods: {
-        handleNewDescriptionSubmit(){
+        async handleNewDescriptionSubmit(){
+            if(!this.loggedIn)
+                return this.$router.push({name: 'login'})
+            
             if(this.comName === ""){
                 this.errors.push("El nombre no puede estar vacío")
                 return 
             }
 
+            const response = await communityService.createCommunity(this.comName, this.comDescription)
             
+            if(response.errores){
+                response.errores.forEach(error => {
+                    this.errors.push(error.error)
+                });
+                return
+            }
+
+            this.$router.push({name: 'community', params: {comName: this.comName}})
         }
     }
 };

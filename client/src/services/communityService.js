@@ -29,5 +29,17 @@ export default {
         return (await axios.get(comunidadUrl + `/${communityName}/usuario`, {
             headers: TOKEN
         })).data.siguiendo
+    },
+    createCommunity(communityName, communityDescription){
+        const TOKEN = getUserToken()
+
+        const payLoad = {name: communityName, description: communityDescription}
+
+        return axios.post(comunidadUrl, payLoad, { headers: TOKEN}).then(resp => {
+            return resp.data
+        }).catch(err => {
+            return err.response.data
+        })
+
     }
 }

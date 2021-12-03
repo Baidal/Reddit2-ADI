@@ -6,7 +6,6 @@ const register = urls.DEFAULT_API + "register";
 
 export default {
     login(nickEmail, password) {
-        console.log(login)
         return axios
             .post(login, {
                 nickEmail,
