@@ -8,6 +8,9 @@ module.exports = {
         'light-grey': '#272729',
         'white-gray': '#f3f3f3',
         'medium-gray': 'rgba(26,26,27,0.8)',
+      },
+      outline: {
+        gray: ['2px dashed rgba(26,26,27,0.8)', '-10px']
       }
     },
   },

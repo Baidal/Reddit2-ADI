@@ -6,6 +6,7 @@ import Register from '../views/Register.vue'
 import Community from '../views/Community.vue'
 import Error from '../views/Error.vue'
 import NewCommunity from '../views/NewCommunity.vue'
+import NewPost from '../views/NewPost.vue'
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     path: '/r/new',
     name: 'newCommunity',
     component: NewCommunity
+  },
+  {
+    path: '/r/:comName/post/new',
+    name: 'newPost',
+    component: NewPost
   }
 ]
 

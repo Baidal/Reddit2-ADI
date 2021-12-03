@@ -18,7 +18,7 @@
             <!-- Footer del post-->
             <div class="flex text-gray-600 text-sm items-center ml-4 mb-2">
                 <ChatAltIcon class="w-4 h-4"/>
-                <p class="mr-4">{{this.post.numComments}} Comentarios</p>
+                <p class="mr-4">{{this.getNumCommentsString()}}</p>
                 <ShareIcon class="w-4 h-4"/>
                 <p class="mr-4">Compartir</p>
             </div>
@@ -46,6 +46,15 @@ export default {
     methods: {
         getPostUrlImage(){
             return "http://localhost:3000" + this.post.url_image
+        },
+        getNumCommentsString(){
+            if(!this.post.numComments)
+                return "0 Comentarios"
+            else if(this.post.numComments == 1)
+                return "1 Comentario"
+            else
+                return `${this.post.numComments} Comentarios`
+            
         }
     }
 }

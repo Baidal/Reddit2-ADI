@@ -22,6 +22,9 @@
                     </div>
                     <div class="border-b border-gray-700 mx-1 my-2"/>
                     <button class="py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3" v-on:click="followUnfollowCommunity">{{this.getFollowUnfollowButtonString()}}</button>
+                    <router-link :to="{name: 'newPost'}" class="flex py-1 rounded-full bg-gray-300 font-bold hover:bg-gray-400 w-full text-black mb-3 justify-center">
+                        Nuevo post
+                    </router-link>
                 </div>
             </div>
             <div class="w-4/6" v-if="this.community.Posts?.length !== 0">
