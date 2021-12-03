@@ -1,5 +1,5 @@
 <template>
-    <div class="flex border-gray-600 border-thin m-3 rounded-md">
+    <div class="flex border-light-grey border-thin m-3 rounded-md">
         <!-- Panel de la izquierda-->
         <div class="w-10  bg-medium-gray flex flex-col items-center text-white p-2">
             <button><ChevronUpIcon class="w-4 h-4"/></button>
@@ -7,16 +7,28 @@
             <button><ChevronDownIcon class="w-4 h-4 mb-3"/></button>
         </div>
         <!-- Contenido del post-->
-        <router-link class="block text-left text-white-gray bg-dark-grey w-full" :to="{name: 'post', params: {id: this.post.id}}">
-            <div class="m-2">
+        <router-link class="flex flex-col content-between text-left text-white-gray bg-dark-grey w-full p-2" :to="{path: '/r/post/' + this.post?.id}">
                 <!-- Datos del post-->
-                <h1 class="text-lg font-bold">{{this.post.title}}</h1>
-                <p>{{this.post.text}}</p>
-                <img v-if="this.post.url_image" v-bind:src="getPostUrlImage()" class="mt-3">
+            <div>
+                <div class="block">
+                    <div class="flex justify-start items-center space-x-2">
+                        <h1 class="text-lg font-bold">{{this.post.title}}</h1>
+                        <p class="text-xs text-gray-600">Creado {{this.post?.User ? 'por ' + this.post?.User.nick : ''}} {{this.getPostTime()}}</p>
+                    </div>
+                    <p>{{this.post.text}}</p>
+                    
+                </div>
+            </div>
+            
+            <div v-if="this.post.url_image">
+                <img  v-bind:src="getPostUrlImage()" class="mt-3">
+            </div>
+            <div v-else class="h-5">
+
             </div>
 
             <!-- Footer del post-->
-            <div class="flex text-gray-600 text-sm items-center ml-4 mb-2">
+            <div class="flex text-gray-600 text-sm items-center mt-2">
                 <ChatAltIcon class="w-4 h-4"/>
                 <p class="mr-4">{{this.getNumCommentsString()}}</p>
                 <ShareIcon class="w-4 h-4"/>
@@ -28,9 +40,10 @@
 </template>
 
 <script>
-
 import {ChevronUpIcon, ChevronDownIcon, ShareIcon} from '@heroicons/vue/outline'
 import {ChatAltIcon} from '@heroicons/vue/solid'
+
+import moment from 'moment'
 
 export default {
     name: "PostCard",
@@ -41,7 +54,8 @@ export default {
         ShareIcon
     },
     props: {
-        post: {}
+        post: {},
+        postComments: null
     },
     methods: {
         getPostUrlImage(){
@@ -55,6 +69,9 @@ export default {
             else
                 return `${this.post.numComments} Comentarios`
             
+        },
+        getPostTime(){
+            return moment(this.post.createdAt).locale('es').fromNow()
         }
     }
 }
