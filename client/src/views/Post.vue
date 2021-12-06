@@ -86,7 +86,7 @@ export default {
         },
         updateVotes(new_votes){
             this.post.votes = new_votes
-        }
+        },
     },
 };
 </script>

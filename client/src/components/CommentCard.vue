@@ -13,9 +13,9 @@
             <div class="flex flex-col space-y-1">
                 <p class="text-sm text-white-gray">{{this.comment?.text}}</p>
                 <div class="flex justify-start space-x-2 text-gray-500 items-center mb-3">
-                    <button><ChevronUpIcon class="w-4 h-4"/></button>
-                    <p class="text-sm">{{this.comment.votes}}</p>
-                    <button><ChevronDownIcon class="w-4 h-4"/></button>
+                    <button v-on:click="upVoteComment"><ChevronUpIcon class="w-4 h-4"/></button>
+                    <p class="text-sm">{{this.votes}}</p>
+                    <button v-on:click="downVoteComment"><ChevronDownIcon class="w-4 h-4"/></button>
                     <button v-if="!this.comment?.is_subComment" class="flex items-center text-sm" v-on:click="showNewSubCommentArea()"><ChatAltIcon class="w-4 h-4" />Comentar</button>
                     
                 </div>
@@ -37,6 +37,7 @@ import {ChatAltIcon} from '@heroicons/vue/solid'
 import {getProfileImage} from '../utils/utils'
 
 import moment from 'moment'
+import commentService from '../services/commentService'
 
 
 export default {
@@ -47,11 +48,12 @@ export default {
     data(){
         return {
             new_comment: '',
-            subCommentArea: false
+            subCommentArea: false,
+            votes: this.comment.votes
         }
     },
     emits: {
-        newSubComment: null
+        newSubComment: null,
     }
     ,
     components: {
@@ -81,6 +83,18 @@ export default {
 
             this.new_comment = ''
             this.subCommentArea = false
+        },
+        upVoteComment(){
+            commentService.voteComment(this.comment.id, 1).then(res => {
+                const new_votes = res.commentToVote.votes
+                this.votes = new_votes
+            })
+        },
+        downVoteComment(){
+            commentService.voteComment(this.comment.id, -1).then(res => {
+                const new_votes = res.commentToVote.votes
+                this.votes = new_votes
+            })
         }
     }
 }
