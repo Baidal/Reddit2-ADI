@@ -2,9 +2,9 @@
     <div class="flex border-light-grey border-thin m-3 rounded-md">
         <!-- Panel de la izquierda-->
         <div class="w-10  bg-medium-gray flex flex-col items-center text-white p-2">
-            <button><ChevronUpIcon class="w-4 h-4"/></button>
+            <button v-on:click="upVotePost"><ChevronUpIcon class="w-4 h-4"/></button>
             <p class="my-1 text-sm">{{this.post.votes}}</p>
-            <button><ChevronDownIcon class="w-4 h-4 mb-3"/></button>
+            <button v-on:click="downVotePost"><ChevronDownIcon class="w-4 h-4 mb-3"/></button>
         </div>
         <!-- Contenido del post-->
         <router-link class="flex flex-col content-between text-left text-white-gray bg-dark-grey w-full p-2" :to="{path: '/r/post/' + this.post?.id}">
@@ -44,6 +44,7 @@ import {ChevronUpIcon, ChevronDownIcon, ShareIcon} from '@heroicons/vue/outline'
 import {ChatAltIcon} from '@heroicons/vue/solid'
 
 import moment from 'moment'
+import postService from '../services/postService'
 
 export default {
     name: "PostCard",
@@ -55,8 +56,8 @@ export default {
     },
     props: {
         post: {},
-        postComments: null
     },
+    emits: ['update-votes'],
     computed: {
         getNumCommentsString(){
             if(!this.post.numComments)
@@ -75,6 +76,18 @@ export default {
         
         getPostTime(){
             return moment(this.post.createdAt).locale('es').fromNow()
+        },
+        upVotePost(){
+            postService.votePost(this.post.id, 1).then((resp) => {
+                const new_votes = resp.post.votes
+                this.$emit('update-votes', new_votes, this.post.id)
+            })
+        },
+        downVotePost(){
+            postService.votePost(this.post.id, -1).then((resp) => {
+                const new_votes = resp.post.votes
+                this.$emit('update-votes', new_votes, this.post.id)
+            })
         }
     }
 }

@@ -34,5 +34,14 @@ export default {
             return err.response.data
         })
 
+    },
+    votePost(postId, value){
+        const TOKEN = getUserToken()
+
+        return axios.post(`${url_post}/${postId}/voto`, {value}, {headers: TOKEN}).then(res => {
+            return res.data
+        }).catch(err => {
+            return err.response.data
+        })
     }
 }
