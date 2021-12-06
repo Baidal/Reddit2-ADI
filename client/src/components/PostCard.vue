@@ -30,7 +30,7 @@
             <!-- Footer del post-->
             <div class="flex text-gray-600 text-sm items-center mt-2">
                 <ChatAltIcon class="w-4 h-4"/>
-                <p class="mr-4">{{this.getNumCommentsString()}}</p>
+                <p class="mr-4">{{this.getNumCommentsString}}</p>
                 <ShareIcon class="w-4 h-4"/>
                 <p class="mr-4">Compartir</p>
             </div>
@@ -57,10 +57,7 @@ export default {
         post: {},
         postComments: null
     },
-    methods: {
-        getPostUrlImage(){
-            return "http://localhost:3000" + this.post.url_image
-        },
+    computed: {
         getNumCommentsString(){
             if(!this.post.numComments)
                 return "0 Comentarios"
@@ -70,6 +67,12 @@ export default {
                 return `${this.post.numComments} Comentarios`
             
         },
+    },
+    methods: {
+        getPostUrlImage(){
+            return "http://localhost:3000" + this.post.url_image
+        },
+        
         getPostTime(){
             return moment(this.post.createdAt).locale('es').fromNow()
         }

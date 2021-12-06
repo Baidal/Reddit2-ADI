@@ -53,16 +53,19 @@ export default {
                 return
 
             const response = await commentService.createComment(this.postId, this.new_comment, -1)
-
+            const new_comment = response.new_comment
+            new_comment.subComments = [] //cuando creamos el objeto, este no viene con el array de subComments
             if(response.errors)
                 return
             
             this.post.Comments.unshift(response.new_comment)
             this.new_comment = ''
+            this.post.numComments++
         },
         async newSubComment(props){
             const response = await commentService.createComment(props.postId, props.new_comment, props.commentId)
             this.post.Comments[this.post.Comments.findIndex((comment) => comment.id == props.commentId)].subComments.unshift(response.new_subcomment)
+            this.post.numComments++
         },
         getNextComments(){
             window.onscroll = async () => {

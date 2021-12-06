@@ -16,7 +16,7 @@
                     <button><ChevronUpIcon class="w-4 h-4"/></button>
                     <p class="text-sm">{{this.comment.votes}}</p>
                     <button><ChevronDownIcon class="w-4 h-4"/></button>
-                    <button v-if="!this.comment?.is_subComment" class="flex items-center" v-on:click="showNewSubCommentArea()"><ChatAltIcon class="w-4 h-4" />Comentar</button>
+                    <button v-if="!this.comment?.is_subComment" class="flex items-center text-sm" v-on:click="showNewSubCommentArea()"><ChatAltIcon class="w-4 h-4" />Comentar</button>
                     
                 </div>
                 <div class="block space-y-2 pb-2" v-if="subCommentArea">
@@ -80,6 +80,7 @@ export default {
             })
 
             this.new_comment = ''
+            this.subCommentArea = false
         }
     }
 }
