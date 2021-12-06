@@ -2,9 +2,11 @@
     <div class="block w-1/2 mx-auto space-y-6">
         <PostCard :post="post"/>
         <div class="space-y-3 bg-dark-grey p-4 rounded border border-light-grey m-3 mb-40">
-            <textarea class="box-border pl-4 pt-2 block w-full bg-medium-gray h-24 border border-light-grey focus:outline-none focus:ring-1 focus:ring-gray-600 text-gray-300" placeholder="Nuevo comentario..."></textarea>
-            <button class="bg-white-gray rounded-full px-3 py-1 text-xs font-bold">Comentar</button>
-            <CommentCard v-for="comment in this.post.Comments" :key="comment.id" :comment="comment"/>
+            <form class="space-y-3" @submit.prevent="newComment">
+                <textarea v-model="new_comment" class="box-border pl-4 pt-2 block w-full bg-medium-gray h-24 border border-light-grey focus:outline-none focus:ring-1 focus:ring-gray-600 text-gray-300" placeholder="Nuevo comentario..."></textarea>
+                <button class="bg-white-gray rounded-full px-3 py-1 text-xs font-bold" :class="{'cursor-not-allowed': this.canComment(), 'text-gray-400': this.canComment()}">Comentar</button>
+            </form>
+            <CommentCard v-for="comment in this.post.Comments" :key="comment.id" :comment="comment" @new-sub-comment="newSubComment"/>
         </div>
         
     </div>
@@ -12,6 +14,7 @@
 
 <script>
 import postService from "../services/postService";
+import commentService from "../services/commentService";
 
 import CommentCard from "../components/CommentCard.vue";
 import PostCard from "../components/PostCard.vue";
@@ -23,7 +26,8 @@ export default {
             post: {},
             postId: this.$route.params.id,
             commentPage: 1,
-            commentLimit: 15
+            commentLimit: 15,
+            new_comment: ''
         };
     },
     components: {
@@ -36,6 +40,25 @@ export default {
     methods: {
         getPostData(){
             return  postService.getPost(this.postId, this.commentPage, this.commentLimit)
+        },
+        canComment(){
+            return this.new_comment === ''
+        },
+        async newComment(){
+            if(this.new_comment === '')
+                return
+
+            const response = await commentService.createComment(this.postId, this.new_comment, -1)
+
+            if(response.errors)
+                return
+            
+            this.post.Comments.unshift(response.new_comment)
+            this.new_comment = ''
+        },
+        async newSubComment(props){
+            const response = await commentService.createComment(props.postId, props.new_comment, props.commentId)
+            this.post.Comments[this.post.Comments.findIndex((comment) => comment.id == props.commentId)].subComments.unshift(response.new_subcomment)
         }
     },
 };

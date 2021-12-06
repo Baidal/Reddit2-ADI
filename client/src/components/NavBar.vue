@@ -46,7 +46,7 @@
 <script>
 
 import {SearchIcon} from '@heroicons/vue/outline'
-
+import {getProfileImage} from '../utils/utils'
 
 export default {
     name: 'NavBar',
@@ -65,7 +65,7 @@ export default {
             return this.user.numCommunities + " Comunidades"
         },
         getProfileUrl(){
-            return this.user.url_image ? "http://localhost:3000" + this.user.url_image : require('../assets/reddit-avatar.png')
+            return getProfileImage(this.user.url_image)
         }
     },
     props: {
