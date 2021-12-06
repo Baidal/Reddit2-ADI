@@ -1,6 +1,8 @@
 <template>
-    <div class="flex m-3 border-gray-600 border-thin rounded-md">
-        <p class="text-white">{{comment.text}}</p>
+    <div class="flex border-gray-600 border-thin rounded-md flex-col">
+        <div class="flex justify-start items-center">
+            
+        </div>
     </div>
 </template>
 
