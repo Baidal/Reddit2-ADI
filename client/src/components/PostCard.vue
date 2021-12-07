@@ -17,7 +17,8 @@
                     <div class="flex justify-start items-center space-x-2">
                         <h1 class="text-lg font-bold">{{this.post.title}}</h1>
                         <p class="text-xs text-gray-600">Creado {{this.post?.User ? 'por ' + this.post?.User.nick : ''}} {{this.getPostTime()}}</p>
-                        
+                        <router-link class="text-xs text-gray-600 z-10" :to="{name: 'community', params: {comName: this.post.communityname ? this.post.communityname : 'dasd'}}">/r/{{this.post?.communityname}}</router-link>
+                        <!-- <p class="text-xs text-gray-600">/r/{{this.post.communityname}}</p> -->
 
                     </div>
                     <p>{{this.post.text}}</p>

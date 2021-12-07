@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="w-4/6" v-if="this.community.Posts?.length !== 0">
-                <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post" @update-votes="updateVotes"/>
+                <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post" @update-votes="updateVotes" @delete-post="deletePost"/>
             </div>
             <div v-else class="flex text-white">
                 <h1>Esta comunidad aún no cuenta con ningún post. </h1><p> Sé el primero en postear!</p>
@@ -41,6 +41,7 @@
 import communityService from "../services/communityService"
 
 import PostCard from "../components/PostCard.vue"
+import postService from '../services/postService'
 
 export default {
     name: 'Community',
@@ -54,7 +55,8 @@ export default {
             postPage: 1,
             postLimit: 10,
             userFollowsCommunity: false,
-            noMorePosts: false
+            noMorePosts: false,
+            followers: 0
         }
     },
     async beforeMount(){
@@ -63,6 +65,7 @@ export default {
         })
         
         this.userFollowsCommunity = await communityService.userFollowsCommunity(this.name) 
+        this.followers = (await this.getNumFollowers()).seguidores
         
     },
     mounted(){
@@ -74,12 +77,12 @@ export default {
         },
         
         getNumFollowersString(){
-            if(!this.community.numFollowers)
+            if(!this.followers)
                 return '0 seguidores'
-            else if(this.community.numFollowers == 1)
+            else if(this.followers == 1)
                 return '1 seguidor'
             
-            return this.community.numFollowers + ' seguidores'
+            return this.followers + ' seguidores'
         }
     },
     methods: {
@@ -89,17 +92,14 @@ export default {
                 return
             }
 
-            
             communityService.followUnfollowCommunity(this.name)
             
             if(this.userFollowsCommunity)
-                this.community.numFollowers--
+                this.followers--
             else
-                this.community.numFollowers++
+                this.followers++
             
             this.userFollowsCommunity = !this.userFollowsCommunity
-            
-
         },
         getFollowUnfollowButtonString(){
             if(this.userFollowsCommunity)
@@ -135,6 +135,16 @@ export default {
                 }
             }
         },
+        getNumFollowers(){
+            return communityService.getNumFollowers(this.name)
+        },
+        deletePost(postId){
+            postService.deletePost(postId).then(() => {
+                this.community.Posts = this.community.Posts.filter(post => post.id !== postId)
+            }).catch(() => {
+                alert("No se ha podido eliminar el post o careces de permisos para ello")
+            })
+        }
     }
 }
 </script>

@@ -41,5 +41,8 @@ export default {
             return err.response.data
         })
 
+    },
+    getNumFollowers(communityName){
+        return axios.get(`${comunidadUrl}/${communityName}/seguidores`).then(res => res.data).catch(err => err.response.data)
     }
 }

@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="w-3/4" v-if="this.posts?.length !== 0">
-            <PostCard v-for="post in posts" :key="post.id" :post="post" @update-votes="updateVotes"/>
+            <PostCard v-for="post in posts" :key="post.id" :post="post" @update-votes="updateVotes" @delete-post="deletePost"/>
         </div>
         <div class="w-3/4 flex text-white" v-else>
             <h1>Parece que aún no sigues a ninguna comunidad...</h1>
@@ -124,6 +124,13 @@ export default {
         },
         updateVotes(new_votes, postId){
             this.posts[this.posts.findIndex((post) => post.id == postId)].votes = new_votes
+        },
+        deletePost(postId){
+            postService.deletePost(postId).then(() => {
+                this.posts = this.posts.filter((post) => post.id !== postId)
+            }).catch(() => {
+                alert("No se ha podido eliminar el post o careces de permisos para ello")
+            })
         }
 
     }
