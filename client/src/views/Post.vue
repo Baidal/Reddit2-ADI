@@ -6,7 +6,7 @@
                 <textarea v-model="new_comment" class="box-border pl-4 pt-2 block w-full bg-medium-gray h-24 border border-light-grey focus:outline-none focus:ring-1 focus:ring-gray-600 text-gray-300" placeholder="Nuevo comentario..."></textarea>
                 <button class="bg-white-gray rounded-full px-3 py-1 text-xs font-bold" :class="{'cursor-not-allowed': this.canComment(), 'text-gray-400': this.canComment()}">Comentar</button>
             </form>
-            <CommentCard v-for="comment in this.post.Comments" :key="comment.id" :comment="comment" @new-sub-comment="newSubComment"/>
+            <CommentCard v-for="comment in this.post.Comments" :key="comment.id" :comment="comment" @new-sub-comment="newSubComment" :post-owner-id="this.post.UserId" @deleteComment="deleteComment"/>
         </div>
         
     </div>
@@ -95,6 +95,24 @@ export default {
             }else{
                 alert("No se ha podido eliminar el post o careces de permisos para ello")
             }
+        },
+        deleteComment(commentId){
+            commentService.deleteComment(commentId).then(() => {
+                for(let i = 0; i < this.post.Comments.length; i++){
+                    if(this.post.Comments[i].id == commentId){
+                        this.post.Comments.splice(i,1)
+                        return
+                    }
+
+                    //buscamos en los subcomentarios del comentario
+                    for(let y = 0; y < this.post.Comments[i].subComments.length; y++){
+                        if(this.post.Comments[i].subComments[y].id == commentId){
+                            this.post.Comments[i].subComments.splice(y,1)
+                            return
+                        }
+                    }
+                }
+            })
         }
     },
 };

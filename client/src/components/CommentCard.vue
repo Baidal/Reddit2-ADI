@@ -9,6 +9,8 @@
                 
                 <p class="text-xs font-bold text-gray-600">{{this.comment.User?.nick}}</p>
                 <p class="text-xs font-bold text-gray-600">{{this.getCommentTime()}}</p>
+                <TrashIcon v-if="this.userCanDeleteComment()" v-on:click="showDeleteCard()" class="text-gray-600 float-right h-4 w-4 mr-2 cursor-pointer"/>
+
             </div>
             <div class="flex flex-col space-y-1">
                 <p class="text-sm text-white-gray">{{this.comment?.text}}</p>
@@ -24,17 +26,20 @@
                     <button v-on:click="newComment" class="bg-white-gray rounded-full px-3 py-1 text-xs font-bold" :class="{'cursor-not-allowed': this.canComment(), 'text-gray-400': this.canComment()}">Comentar</button>
 
                 </div>
-                <CommentCard v-for="subComment in this.comment?.subComments" :key="subComment.id" :comment="subComment"/>
+                <CommentCard v-for="subComment in this.comment?.subComments" :key="subComment.id" :comment="subComment" @delete-sub-comment="deleteSubComment"/>
             </div>
         </div>
+        <DeleteCard :whatToDelete="'comment'" @deleteCancel="cancelDelete" v-if="deleteCard" @delete="deleteComment()"/>
     </div>
     
 </template>
 
 <script>
 import {ChevronUpIcon, ChevronDownIcon} from '@heroicons/vue/outline'
-import {ChatAltIcon} from '@heroicons/vue/solid'
+import {ChatAltIcon, TrashIcon} from '@heroicons/vue/solid'
 import {getProfileImage} from '../utils/utils'
+
+import DeleteCard from './DeleteCard.vue'
 
 import moment from 'moment'
 import commentService from '../services/commentService'
@@ -44,22 +49,38 @@ export default {
     name: 'CommentCard',
     props: {
         comment: {},
+        postOwnerId: {
+            default: 0,
+        }
     },
     data(){
         return {
             new_comment: '',
             subCommentArea: false,
-            votes: this.comment.votes
+            votes: this.comment.votes,
+            deleteCard: false
         }
     },
     emits: {
         newSubComment: null,
+        deleteComment: null,
+        deleteSubComment: null
     }
     ,
     components: {
         ChevronDownIcon,
         ChevronUpIcon,
-        ChatAltIcon
+        ChatAltIcon,
+        TrashIcon,
+        DeleteCard
+    },
+    computed: {
+        loggedIn() {
+            return this.$store.getters['auth/userLoggedIn']
+        },
+        userLoggedIn(){
+            return this.$store.getters['auth/getUser']
+        }
     },
     methods: {
         getProfileImage(){
@@ -95,6 +116,29 @@ export default {
                 const new_votes = res.commentToVote.votes
                 this.votes = new_votes
             })
+        },
+        userCanDeleteComment(){
+            if(this.loggedIn && (this.userLoggedIn.id === this.postOwnerId || this.userLoggedIn.id === this.comment.UserId))
+                return true
+
+            return false
+        },
+        showDeleteCard(){
+            this.deleteCard = !this.deleteCard
+        },
+        cancelDelete(){
+            this.showDeleteCard()
+        },
+        deleteComment(){
+            if(this.comment.is_subComment){
+                this.$emit('deleteSubComment', this.comment.id)
+            }else{
+                this.$emit('deleteComment', this.comment.id)
+
+            }
+        },
+        deleteSubComment(subCommentId){
+            this.$emit('deleteComment', subCommentId)
         }
     }
 }

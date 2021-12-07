@@ -2,7 +2,7 @@
     <div class="fixed top-0 left-0 w-screen h-screen bg-light-grey opacity-80 z-20">
         <div class="absolute top-1/3 left-1/2 -mt-12 -ml-40 w-80 border border-line-gray rounded-md shadow-md bg-dark-grey opacity-100">
             <h1 class="text-gray-300 text-center text-lg font-bold">
-                Seguro que deseas eliminar el post?
+                {{this.generateDeleteMsg()}}
             </h1>
             <div class="h-20"></div>
             <div class="flex justify-center space-x-4 mb-6">
@@ -25,7 +25,7 @@ export default {
     },
     emits: {
         deleteCancel: null,
-        delete: null
+        delete: null,
     },
     methods: {
         generateDeleteMsg(){

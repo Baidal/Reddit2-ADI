@@ -2,7 +2,9 @@ import axios from "axios";
 import urls from "./apiUrl";
 
 const commentUrl = urls.POST_API;
+const deleteCommentUrl = urls.COMENTARIO_API
 import getUserToken from "./getUserToken";
+
 
 export default {
     createComment(postId, commentText, commentId) {
@@ -31,7 +33,12 @@ export default {
                 { value },
                 { headers: TOKEN }
             )
-            .then((res) =>  res.data)
+            .then((res) => res.data)
             .catch((err) => err.response.data);
+    },
+    deleteComment(commentId) {
+        const TOKEN = getUserToken();
+
+        return axios.delete(`${deleteCommentUrl}/${commentId}`, {headers: TOKEN});
     },
 };
