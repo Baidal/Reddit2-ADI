@@ -1,6 +1,6 @@
 <template>
     <div class="block w-1/2 mx-auto space-y-6 mb-10">
-        <PostCard :post="post" @update-votes="updateVotes"/>
+        <PostCard :post="post" @update-votes="updateVotes" @delete-post="deletePost"/>
         <div class="space-y-3 bg-dark-grey p-4 rounded border border-light-grey m-3">
             <form class="space-y-3" @submit.prevent="newComment">
                 <textarea v-model="new_comment" class="box-border pl-4 pt-2 block w-full bg-medium-gray h-24 border border-light-grey focus:outline-none focus:ring-1 focus:ring-gray-600 text-gray-300" placeholder="Nuevo comentario..."></textarea>
@@ -87,6 +87,15 @@ export default {
         updateVotes(new_votes){
             this.post.votes = new_votes
         },
+        async deletePost(postId){
+            const response = await postService.deletePost(postId)
+            
+            if(!response.errores){
+                this.$router.push({name: 'Home'})
+            }else{
+                alert("No se ha podido eliminar el post o careces de permisos para ello")
+            }
+        }
     },
 };
 </script>

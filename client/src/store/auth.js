@@ -62,7 +62,6 @@ export default {
             return state.loggedIn
         },
         getUser(state){
-            console.log(state)
             return state.actualUser.user
         },
         getUserToken(state){
