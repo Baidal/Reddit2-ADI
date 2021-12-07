@@ -12,8 +12,8 @@ export default {
     async getCommunities(offset, limit){
         return await axios.get(comunidadesUrl + getPaginationUrlString(offset, limit))
     },
-    async getCommunity(communityName, offset, limit){
-        return await axios.get(comunidadUrl + `/${communityName}` + getPaginationUrlString(offset, limit))
+    getCommunity(communityName, offset, limit){
+        return axios.get(comunidadUrl + `/${communityName}` + getPaginationUrlString(offset, limit))
     },
     async followUnfollowCommunity(communityName){
         return await axios.post(comunidadUrl + `/usuario/${communityName}`, {},{

@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="w-4/6" v-if="this.community.Posts?.length !== 0">
-                <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post"/>
+                <PostCard v-for="post in this.community.Posts" :key="post.id" :post="post" @update-votes="updateVotes"/>
             </div>
             <div v-else class="flex text-white">
                 <h1>Esta comunidad aún no cuenta con ningún post. </h1><p> Sé el primero en postear!</p>
@@ -50,21 +50,23 @@ export default {
     data(){
         return {
             name: this.$route.params.comName,
-            community: [],
+            community: {},
             postPage: 1,
-            postLimit: 15,
-            userFollowsCommunity: false
+            postLimit: 10,
+            userFollowsCommunity: false,
+            noMorePosts: false
         }
     },
-    async mounted(){
+    async beforeMount(){
+        this.getCommunityData().then(res => this.community = res.data).catch(() => {
+            this.$router.push({name: 'error', params: {error: `No se ha encontrado la comunidad ${this.name}`}})
+        })
+        
         this.userFollowsCommunity = await communityService.userFollowsCommunity(this.name) 
         
-        try{
-            this.community = await (await communityService.getCommunity(this.name, this.postPage, this.postLimit)).data
-        }catch(e){
-            this.$router.push({name: 'error', params: {error: `No se ha encontrado la comunidad ${this.name}`}})
-        }
-    
+    },
+    mounted(){
+        this.getNextPosts()
     },
     computed: {
         loggedIn() {
@@ -104,7 +106,35 @@ export default {
                 return 'Dejar de seguir'
             
             return 'Seguir' 
-        }
+        },
+        updateVotes(new_votes, postId){
+            this.community.Posts[this.community.Posts.findIndex((post) => post.id == postId)].votes = new_votes
+        },
+        getCommunityData(){
+            return communityService.getCommunity(this.name, this.postPage, this.postLimit)   
+        },
+        getNextPosts(){
+            window.onscroll = async () => {
+                //Sacado de https://www.digitalocean.com/community/tutorials/vuejs-implementing-infinite-scroll 
+                const bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                if (bottomOfWindow && !this.noMorePosts) {
+                    
+                    this.postPage++;
+
+                    try{
+                        const new_posts = await this.getCommunityData()
+                        this.community.Posts = this.community.Posts.concat(new_posts.data.Posts)
+                    }catch(e){
+                        this.noMorePosts = true
+                    }
+                    // this.posts = this.posts.concat(new_posts)
+
+                    // //no hay mas posts
+                    // if(new_posts.length === 0)
+                    //     this.noMorePosts = true
+                }
+            }
+        },
     }
 }
 </script>
