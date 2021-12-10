@@ -81,7 +81,7 @@ export default {
             }else {
                 this.nickEmail = ""
                 this.password = ""
-                this.$router.push("/")
+                this.$router.back()
             }
         }
     }
