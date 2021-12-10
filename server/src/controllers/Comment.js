@@ -11,6 +11,8 @@ module.exports = {
     try {
       const id = req.params.id;
       const userId = res.locals.user.id;
+      const userNick = res.locals.user.nick
+      const userImage = res.locals.user.url_image
       const post = await Post.findByPk(id);
 
       if (!post) {
@@ -52,6 +54,8 @@ module.exports = {
           is_subComment: true,
         });
 
+        new_subcomment.dataValues.User = {nick: userNick, url_image: userImage}
+
         actualComment.addSubComment(new_subcomment);
 
         res.status(201).send({
@@ -64,6 +68,8 @@ module.exports = {
           text,
           is_subComment: false,
         });
+
+        new_comment.dataValues.User = {nick: userNick, url_image: userImage}
 
         res.status(201).send({ new_comment });
       }

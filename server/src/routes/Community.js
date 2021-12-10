@@ -3,6 +3,7 @@ const authChecker = require('../utils/auth')
 
 module.exports = (app) => {
     app.get('/api/comunidad/:name',communityController.getCommunity)
+    app.get('/api/comunidad/:name/seguidores',communityController.getCommunityFollowers)
     app.get('/api/comunidades', communityController.getCommunities)
     app.get('/api/comunidad/nombre/:name', communityController.searchCommunity)
     app.post('/api/comunidad', authChecker, communityController.createCommunity)

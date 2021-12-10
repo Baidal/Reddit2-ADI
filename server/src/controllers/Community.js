@@ -2,6 +2,8 @@ const Community = require("../models").Community;
 const Post = require("../models").Post;
 const Comment = require("../models").Comment;
 const Sequelize = require("../models").Sequelize;
+const sequelize = require("../models").sequelize;
+
 const User = require("../models").User;
 const {Op, where} = require('sequelize')
 
@@ -53,17 +55,6 @@ module.exports = {
         where: { name: name },
         limit,
         offset,
-        attributes: {
-          include: [
-            [
-              Sequelize.fn(
-                "COUNT",
-                Sequelize.col("userFollowsCommunity->user_community.UserId")
-              ),
-              "numFollowers",
-            ],
-          ],
-        },
         include: [
           {
             required: false,
@@ -79,6 +70,10 @@ module.exports = {
                 model: User,
                 attributes: ["nick"],
               },
+              {
+                model: Community,
+                attributes: []
+              }
             ],
             attributes: {
               include: [
@@ -86,7 +81,14 @@ module.exports = {
                   Sequelize.fn("COUNT", Sequelize.col("Posts->Comments.id")),
                   "numComments",
                 ],
+                [
+                  sequelize.literal(`(
+                    "Posts->Community"."name"
+                  )`),
+                  "communityname"
+                ],
               ],
+              
             },
           },
           {
@@ -103,6 +105,7 @@ module.exports = {
           "userFollowsCommunity->user_community.UserId",
           "userFollowsCommunity->user_community.CommunityId",
           "Posts->User.id",
+          "Posts->Community.name"
         ],
         order: [[Post, "createdAt", "DESC"]],
         subQuery: false,
@@ -119,6 +122,25 @@ module.exports = {
     } catch (e) {
       internalError(res, e, "getCommunity", "Community");
     }
+  },
+  async getCommunityFollowers(req, res){
+    const name = req.params.name;
+
+    const community = await Community.findOne({
+      where: {name}
+    })
+
+    if (!community) {
+      res.status(404).send({
+        errores: [{ error: `No se ha encontrado la comunidad ${name}` }],
+      });
+      return;
+    }
+
+    res.status(200).send({
+      seguidores: await community.countUserFollowsCommunity()
+    })
+
   },
   async searchCommunity(req, res) {
     const name = req.params.name
@@ -147,7 +169,7 @@ module.exports = {
 
       if(!community)
         return res.status(404).send({
-          errores: [{error: `No se ha encontrado la comunidad ${name}`}]
+          errores: [{error: `No se ha encontrado la comunidad ${comName}`}]
         })
 
       const response = await community.hasUserFollowsCommunity(res.locals.user.id)

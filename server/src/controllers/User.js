@@ -33,12 +33,19 @@ module.exports = {
       [offset, limit] = paginator(offset, limit, 10);
 
       const query = await sequelize.query(
-        `select * 
-              from public."Posts" 
-              where "CommunityId" in (select "CommunityId" from public."user_community" where "UserId" = $userid)
-              order by "createdAt" DESC
-              OFFSET $offset
-              LIMIT $limit`,
+        `select "Posts".*, 
+            (
+              select count("Comments"."id")
+              from "Comments"
+              where "Comments"."PostId" = "Posts"."id"
+            ) AS "numComments",
+            "Communities"."name" as "communityname"
+          from public."Posts" as "Posts"
+            left outer join "Communities" on "Communities"."id" = "Posts"."CommunityId"
+          where "CommunityId" in (select "CommunityId" from public."user_community" where "UserId" = $userid)
+          order by "Posts"."createdAt" DESC
+          OFFSET $offset
+          LIMIT $limit`,
         {
           type: QueryTypes.SELECT,
           bind: {

@@ -6,6 +6,8 @@ const User = require("../models").User;
 const Community = require("../models").Community;
 const Vote = require("../models").Vote;
 const sequelize = require('../models').sequelize
+const Sequelize = require('../models').Sequelize
+
 const { QueryTypes } = require("sequelize");
 
 const paginator = require("../utils/paginator");
@@ -38,18 +40,44 @@ module.exports = {
                 required: false,
                 model: Comment,
                 as: "subComments",
-                include: { model: User, attributes: ["nick"] },
+                include: { model: User, attributes: ["nick", "url_image"] },
               },
               {
                 model: User,
                 attributes: ["nick"],
               },
             ],
+            
           },
           {
             model: User,
+            attributes: ["nick", "url_image"]
+          },
+          {
+            model: Community,
+            attributes: []
           },
         ],
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+                select count("Comments"."id")
+                from "Comments"
+                where "Comments"."PostId" = "Post"."id"
+              )`),
+              "numComments"
+            ],
+            [
+              sequelize.literal(`(
+                "Community"."name"
+              )`),
+              "communityname"
+            ]
+          ]
+        }
+
+        
       });
 
       if (!post) {
@@ -72,12 +100,18 @@ module.exports = {
       [offset, limit] = paginator(offset, limit, 10);
 
       const query = await sequelize.query(`
-        SELECT "Posts".*, COUNT("Comments"."id") as "numComments", "Communities"."name" as CommunityName, "Users"."nick" as "userNick"
+        SELECT "Posts".*,
+          (
+            select count("Comments"."id")
+            from "Comments"
+            where "Comments"."PostId" = "Posts"."id"
+          ) AS "numComments", 
+          "Communities"."name" as CommunityName, 
+          "Users"."nick" as "userNick"
         FROM "Posts"
-          LEFT OUTER JOIN "Comments" AS "Comments" ON "Posts"."id" = "Comments"."PostId"
           LEFT OUTER JOIN "Communities" ON "Posts"."CommunityId" = "Communities"."id"
           LEFT OUTER JOIN "Users" ON "Posts"."UserId" = "Users"."id"
-        GROUP BY "Posts"."id", "Comments"."id", "Communities"."name", "Users"."nick"
+        GROUP BY "Posts"."id", "Communities"."name", "Users"."nick"
         ORDER BY "Posts"."createdAt" DESC
         OFFSET $offset
         LIMIT $limit`,
@@ -135,13 +169,11 @@ module.exports = {
         UserId: res.locals.user.id,
         CommunityId: community.dataValues.id,
       };
-
       /**
        * Comprobamos si han enviado algún dato, y lo guardamos
        */
       if (req.files && req.files.postImage) {
         const postImage = req.files.postImage;
-        console.log("hola");
         let urlImage = "";
         const absolutePath = process.cwd();
         const relativePath =
@@ -271,6 +303,7 @@ module.exports = {
 
       const communityPost = await post.getCommunity();
 
+      console.log(post.dataValues.UserId, res.locals.user.id)
       /**
        * Comprobamos que el post pertenezca al usuario que ha llamado a la petición, o que pertenezca
        * a la comunidad del usuario que ha llamado a la petición
