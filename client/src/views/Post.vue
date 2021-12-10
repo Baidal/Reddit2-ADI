@@ -31,6 +31,11 @@ export default {
             noMoreComments: false
         };
     },
+    computed: {
+        loggedIn() {
+            return this.$store.getters['auth/userLoggedIn']
+        }
+    },
     components: {
         PostCard,
         CommentCard
@@ -49,8 +54,12 @@ export default {
             return this.new_comment === ''
         },
         async newComment(){
+            if(!this.loggedIn)
+                return this.$router.push({name: 'login'});
+
             if(this.new_comment === '')
                 return
+
 
             const response = await commentService.createComment(this.postId, this.new_comment, -1)
             const new_comment = response.new_comment
