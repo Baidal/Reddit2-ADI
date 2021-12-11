@@ -55,7 +55,22 @@ export default {
         },
         register(state) {
             state.loggedIn = false;
-        }        
+        },
+        updateUser(state, user){
+            const userLocalStorage = JSON.parse(localStorage.getItem("user"))
+                userLocalStorage.user.nick = user.nick
+                userLocalStorage.user.description = user.description
+                userLocalStorage.user.url_image = user.url_image
+            localStorage.setItem("user", JSON.stringify(userLocalStorage));
+
+            state.actualUser.user.nick = user.nick;
+            state.actualUser.user.description = user.description;
+            state.actualUser.user.url_image = user.url_image
+
+        },
+        incrementCommunities(state){
+            state.actualUser.user.numCommunities++
+        }  
     },
     getters: {
         userLoggedIn(state) {
@@ -66,6 +81,9 @@ export default {
         },
         getUserToken(state){
             return state.actualUser.token
+        },
+        getUserCommunities(state){
+            return state.actualUser.user.numCommunities
         }
     }
 };

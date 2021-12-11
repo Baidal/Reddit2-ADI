@@ -15,19 +15,20 @@
             <input class="block pl-4 bg-light-grey  rounded-md focus:outline-none w-full" placeholder="Buscar en reddit...">
         </div>
         <div v-if="user">
-            <a href="perfil">
-                <div class="flex border-2 border-gray-700 p-2 px-7 rounded-lg relative" v-if="user">
-                    <img v-bind:src="getProfileUrl()" class="rounded-full max-h-8 max-w-8 my-auto w-8 h-8">
-                    <div class="flex justify-center items-center ml-2 space-x-4">
-                        <p class="text-center">{{user.nick}}</p>
-                        <p class="text-center">{{generateCommunityNumberString()}}</p>
-                        <router-link :to="{name: 'newCommunity'}" class="hover:bg-gray-700 rounded-md p-1">
-                            Nueva comunidad
-                        </router-link>
-                        <button @click.prevent="logout" class="hover:bg-gray-700 rounded-md p-1">Cerrar sesión</button>
-                    </div>
+            <div class="flex border-2 border-gray-700 p-2 px-7 rounded-lg relative" v-if="user">
+                <div class="flex justify-center items-center ml-2 space-x-4">
+                    <router-link :to="{name: 'perfil', params: {name: this.user.nick}}" class="flex justify-center items-center space-x-4">
+                        <img v-bind:src="getProfileUrl()" class="rounded-full max-h-8 max-w-8 my-auto w-8 h-8">
+                        <p class="text-center hover:bg-light-grey rounded-md p-1">{{user.nick}}</p>
+                    </router-link>
+                    <p class="text-center">{{generateCommunityNumberString()}}</p>
+                    <router-link :to="{name: 'newCommunity'}" class="hover:bg-light-grey rounded-md p-1">
+                        Nueva comunidad
+                    </router-link>
+                    <button @click.prevent="logout" class="hover:bg-light-grey rounded-md p-1">Cerrar sesión</button>
                 </div>
-            </a>
+            </div>
+            
         </div>
         <div v-else class="my-auto mx-3.5">
             <router-link to="/register" class="border rounded-full border-gray-300 p-2 hover:bg-gray-200 mx-8 hover:text-black">
@@ -56,13 +57,13 @@ export default {
             this.$store.dispatch('auth/logout')
         },
         generateCommunityNumberString() {
-            if(this.user.numCommunities == 0)
+            if(this.getNumCommunities == 0)
                 return "Ninguna comunidad"
             
-            if(this.user.numCommunities == 1)
+            if(this.getNumCommunities == 1)
                 return "1 Comunidad"
             
-            return this.user.numCommunities + " Comunidades"
+            return this.getNumCommunities + " Comunidades"
         },
         getProfileUrl(){
             return getProfileImage(this.user.url_image)
@@ -70,6 +71,11 @@ export default {
     },
     props: {
         user: {}
+    },
+    computed:{
+        getNumCommunities(){
+            return this.$store.getters['auth/getUserCommunities']
+        }
     }
 }
 </script>

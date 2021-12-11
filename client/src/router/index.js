@@ -8,6 +8,7 @@ import Error from '../views/Error.vue'
 import NewCommunity from '../views/NewCommunity.vue'
 import NewPost from '../views/NewPost.vue'
 import Post from '../views/Post.vue'
+import Perfil from '../views/Perfil.vue'
 
 const routes = [
   {
@@ -56,6 +57,11 @@ const routes = [
     name: 'newPost',
     component: NewPost
   },
+  {
+    path: '/r/user/:name',
+    name: 'perfil',
+    component: Perfil
+  }
   
 ]
 

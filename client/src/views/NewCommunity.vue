@@ -53,7 +53,7 @@ export default {
                 });
                 return
             }
-
+            this.$store.commit('auth/incrementCommunities')
             this.$router.push({name: 'community', params: {comName: this.comName}})
         }
     }

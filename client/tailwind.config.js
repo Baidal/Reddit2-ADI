@@ -9,6 +9,9 @@ module.exports = {
         'white-gray': '#f3f3f3',
         'medium-gray': 'rgba(26,26,27,0.8)',
         'line-gray': '#343536',
+        'border-gray': '#474748',
+        'text-gray': '#d7dadc',
+        'meta-text': '#818384'
       },
       outline: {
         gray: ['2px dashed rgba(26,26,27,0.8)', '-10px']

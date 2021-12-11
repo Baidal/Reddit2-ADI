@@ -9,7 +9,7 @@ module.exports = {
   async getCommunities(req, res) {
     try {
       const userId = req.params.id;
-
+      console.log(userId);
       const user = await User.findByPk(userId);
 
       if (!user) {
@@ -59,6 +59,66 @@ module.exports = {
       res.send(query);
     } catch (e) {
       internalError(res, e, "getRelatedPosts", "User");
+    }
+  },
+  async getUser(req, res) {
+    const nick = req.params.name;
+
+    const user = await User.findOne({ where: { nick } });
+
+    if (!user)
+      return res.status(404).send({
+        errores: [{ error: `No se ha encontrado al usuario ${nick}` }],
+      });
+
+    res.send({ user });
+  },
+  async updateUser(req, res) {
+    try {
+      const user = res.locals.user;
+      const { nick, password, description } = req.body;
+
+      console.log(nick);
+
+      const userDb = await User.findByPk(user.id);
+
+      userDb.nick = nick;
+      if(password !== "")
+        userDb.password = password;
+      userDb.description = description;
+      console.log(userDb)
+
+      let urlImage = "";
+      let absolutePath = "";
+      let relativePath = "";
+
+      if (req.files && req.files.userImage) {
+        const profileImage = req.files.userImage;
+
+        absolutePath = process.cwd();
+        relativePath =
+          "/public/uploads/profiles/" +
+          nick +
+          "." +
+          profileImage.mimetype.split("/")[1];
+
+        urlImage = absolutePath + relativePath;
+
+        profileImage.mv(urlImage, (err) => {
+          if (err) return internalError(res, err, "updateUser", "User");
+        });
+
+        relativePath = relativePath.substring(7, relativePath.length);
+        userDb.url_image = relativePath;
+      }
+
+      await userDb.save();
+
+      return res.send({
+        user: userDb,
+      });
+    } catch (e) {
+      internalError(res, e, "updateUser", "User")
     }
   },
 };

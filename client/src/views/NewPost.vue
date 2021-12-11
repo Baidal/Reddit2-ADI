@@ -74,12 +74,8 @@ export default {
                 });
                 return
             }
-
-            /**
-             * TODO:
-             * - Cambiar el router por el de la página del post
-             */
-            this.$router.push({name: 'Home'})
+            
+            this.$router.push({name: 'post', params: {id: response.new_post.id}})
         }
     }
 }
