@@ -9,7 +9,7 @@
             </div>
         </router-link>
         <div class="w-1/4 my-auto flex space-x-2">
-            <div class="flex rounded-sm w-3/4  bg-light-grey h-10 hover:border-gray-400 focus:border-gray-400 border border-gray-300">
+            <!-- <div class="flex rounded-sm w-3/4  bg-light-grey h-10 hover:border-gray-400 focus:border-gray-400 border border-gray-300">
                 <div class="my-auto pl-4">
                     <SearchIcon class="w-5 h-5"/>
                 </div>
@@ -20,7 +20,7 @@
                     <option value="community">Comunidad</option>
                     <option value="post">Post</option>
                 </select>
-            </div>
+            </div> -->
         </div>
         <div v-if="user">
             <div class="flex border-2 border-gray-700 p-2 px-7 rounded-lg relative" v-if="user">
@@ -54,12 +54,12 @@
 
 <script>
 
-import {SearchIcon} from '@heroicons/vue/outline'
+// import {SearchIcon} from '@heroicons/vue/outline'
 import {getProfileImage} from '../utils/utils'
 
 export default {
     name: 'NavBar',
-    components: {SearchIcon},
+    // components: {SearchIcon},
     methods: {
         logout() {
             this.$store.dispatch('auth/logout')
